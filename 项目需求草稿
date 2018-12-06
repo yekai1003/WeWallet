@@ -1,0 +1,30 @@
+WeWallet 项目需求草稿
+1、前端
+	概述：钱包的前端 理论上不限定平台，可以任何平台【桌面(windows,linux)，app(android,ios,winphone等)，小程序，浏览器插件等】
+	功能：新建钱包，绑定钱包地址，token 管理（erc20），余额查询，转账，交易数据管理。
+	扩展：
+	1、按不同的前端平台，可以提供相应的虚拟币购物商城
+	2、虚拟币交易平台连接（盈利的一种）
+2、后端
+	1、钱包业务模块
+		概述：负责提供业务API，提供给前端调用
+		模块：
+			钱包管理：新建，绑定，转账等
+			账号系统：用户管理，让用户登陆这块简化，可以查看数据，余额等，但是私钥可以让用户选择性保存，可以自己存，也可以托管存（没有私钥的前提下，我觉得账户余额查看应该是可以的，有待讨论），用户和账户做区分，用户可以看成钱包，账户可以看成一张卡（以太坊账号），卡对应密码。
+			交易数据查询：历史交易数据（已确定，未确定做区分查看）
+			转账：核心功能
+		新建账号：BIP32、BIP44、BIP39 
+		数据：后端管理的数据包含：用户，账户，交易（其中账户，交易应该是从geth 中剥离出来，geth 只负责区块同步，交易广播等功能，目前构思是这样的）
+	2、区块链模块
+		连接以太坊：geth 负责node 的角色，后端程序需要连接到geth
+		事件监听：监听geth 的各种事件
+		提交交易：广播交易，通过geth
+
+3、合约
+4、资料整理
+	(1)https://blog.csdn.net/xilibi2003/article/details/82897194 理解开发HD 钱包涉及的 BIP32、BIP44、BIP39
+	(2)https://blog.csdn.net/mynameissls/article/details/81032813 基于 BIP39 协议创建 Ethereum HD Wallet
+	(3)https://www.jianshu.com/p/f02b0e858ef4  什么是HD钱包
+	(4)
+	(5)https://blog.csdn.net/abcdad/article/details/82181195 分层确定性钱包-以太坊创建钱包
+	(6)https://github.com/QuincySx/BlockchainWallet-Crypto 比特币、以太坊公私钥生成以及签名
