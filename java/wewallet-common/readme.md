@@ -1,2 +1,1 @@
-# WeWallet Common
-# 公共类库
+# WeWallet Common 公共类库
