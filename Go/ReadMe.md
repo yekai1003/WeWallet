@@ -4,5 +4,5 @@
 * ## wewallet-etc：  配置文件处理  
 * ## wewallet-eths：  以太坊相关处理  
 * ## wewallet-routes：  路由处理  
-* ## wewallet-stati：  html页面目录  
+* ## wewallet-static：  html页面目录  
 * ## wewallet-utils：  通用处理，错误信息  
