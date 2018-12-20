@@ -13,6 +13,7 @@ public class CardType extends EntityBase {
 	private Integer id;
 	
 	private String name;
+	private String code;
 
 	public Integer getId() {
 		return id;
@@ -28,6 +29,14 @@ public class CardType extends EntityBase {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 	
 }
