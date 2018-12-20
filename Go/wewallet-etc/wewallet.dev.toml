@@ -1,0 +1,12 @@
+[common]
+port = ":8086"
+[db]
+driver  = "mysql"
+connstr = "root:root@tcp(127.0.0.1:3306)/copyright?charset=utf8"
+[eth]
+connstr = ""
+keydir = ""
+foundation = ""
+
+
+
