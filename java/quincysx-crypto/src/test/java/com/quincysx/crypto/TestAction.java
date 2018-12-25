@@ -24,6 +24,8 @@ import com.quincysx.crypto.ethereum.EthECKeyPair;
 import com.quincysx.crypto.ethereum.keystore.CipherException;
 import com.quincysx.crypto.ethereum.keystore.KeyStore;
 import com.quincysx.crypto.ethereum.keystore.KeyStoreFile;
+import com.quincysx.crypto.exception.CoinNotFindException;
+import com.quincysx.crypto.exception.NonSupportException;
 
 public class TestAction {
 
@@ -126,7 +128,7 @@ public class TestAction {
 	@Test // turkey three bracket exclude aim gesture sheriff autumn fever box margin frequent
 	public void doAction8() throws ValidationException {
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-		String words = "turkey three bracket exclude aim gesture sheriff autumn fever box margin frequent";
+		String words = "derive horror enhance agent steel card quality snap post grape donate wagon";
 		List<String> mnemonic =  Arrays.asList(words.split(" "));
 		//生产 seed 如果内容一样 种子就会一样
 		byte[] seed = new SeedCalculator().calculateSeed(mnemonic, "");
@@ -158,11 +160,28 @@ public class TestAction {
 		 * 5、master key 用于显示地址？
 		 * 6、直接获取子秘钥 和 BIP44模式获取不同的原因 可能是算法上不同，首先BIP44 里有 chaincode的感念
 		 * 7、那master 应该是对外公开的唯一地址
+		 * 8、以太坊地址 取的是 m/44'/60'/0'/0/0 路劲地址，目前只需要一个
 		 *  */
 	}
 	@Test
 	public void doAction9() {
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		System.out.println(Security.getProvider("BC"));
+	}
+	@Test
+	public void doAction10() throws NonSupportException, CoinNotFindException, ValidationException {
+		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+		String words = "derive horror enhance agent steel card quality snap post grape donate wagon";
+		List<String> mnemonic =  Arrays.asList(words.split(" "));
+		//生产 seed 如果内容一样 种子就会一样
+		byte[] seed = new SeedCalculator().calculateSeed(mnemonic, "");
+		//通过seed 生产公私钥 master
+		ExtendedKey extendedKey = ExtendedKey.create(seed);
+		
+		AddressIndex address = BIP44.parsePath("m/44'/60'/0'/0/0");
+		CoinPairDerive coinKeyPair = new CoinPairDerive(extendedKey);
+		ECKeyPair master = coinKeyPair.derive(address);
+		EthECKeyPair eKey = EthECKeyPair.parse(master);
+		System.out.println(eKey.getAddress());
 	}
 }

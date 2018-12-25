@@ -1,7 +1,6 @@
 package com.quincysx.crypto.ethereum.keystore;
 
 import java.nio.charset.Charset;
-import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;

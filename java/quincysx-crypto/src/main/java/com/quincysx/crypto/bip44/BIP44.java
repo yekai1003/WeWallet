@@ -60,7 +60,7 @@ public final class BIP44 {
             throw new NonSupportException("Only support the 44 protocol");
         }
         //Log.e("++++def", "ddddd  " + Integer.parseInt(accountStr));
-        logger.error("ddddd  " + Integer.parseInt(accountStr));
+        logger.info("account -> " + Integer.parseInt(accountStr));
         Account account = BIP44.m()
                 .purpose44()
                 .coinType(CoinTypes.parseCoinType(Integer.parseInt(coinTypeStr)))

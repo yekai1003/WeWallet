@@ -11,10 +11,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.wzero.wewallet.domain.EntityBase;
 
+@Data
+@EqualsAndHashCode(callSuper=false)
 @Entity
 @Table(name="cards")
+@Builder
 public class Card extends EntityBase {
 	@Id
 	@GeneratedValue
@@ -35,61 +41,5 @@ public class Card extends EntityBase {
 	private Date created;
 	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", updatable = false)
 	private Date updated;
-	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public String getPath() {
-		return path;
-	}
-	public void setPath(String path) {
-		this.path = path;
-	}
-	public String getAddr() {
-		return addr;
-	}
-	public void setAddr(String addr) {
-		this.addr = addr;
-	}
-	public String getKeystore() {
-		return keystore;
-	}
-	public void setKeystore(String keystore) {
-		this.keystore = keystore;
-	}
-	public Date getCreated() {
-		return created;
-	}
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-	public Date getUpdated() {
-		return updated;
-	}
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
-	public BigDecimal getAmount() {
-		return amount;
-	}
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
-	public Integer getMemberId() {
-		return memberId;
-	}
-	public void setMemberId(Integer memberId) {
-		this.memberId = memberId;
-	}
-	public CardType getCardType() {
-		return cardType;
-	}
-	public void setCardType(CardType cardType) {
-		this.cardType = cardType;
-	}
-	
 	
 }

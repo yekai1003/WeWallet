@@ -23,7 +23,11 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-		</dependency>	
+		</dependency>
+		<dependency>
+            <groupId>com.netflix.hystrix</groupId>
+            <artifactId>hystrix-javanica</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -53,6 +57,11 @@
 			<groupId>net.wzero.wewallet</groupId>
 			<artifactId>wewallet-common</artifactId>
   			<version>0.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.quincysx</groupId>
+			<artifactId>quincysx-crypto</artifactId>
+			<version>0.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

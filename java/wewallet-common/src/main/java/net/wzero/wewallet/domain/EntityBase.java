@@ -10,5 +10,5 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonIgnoreProperties(value= {"handler","hibernateLazyInitializer"})
 @MappedSuperclass
 public class EntityBase {
-
+	public EntityBase() {}
 }
