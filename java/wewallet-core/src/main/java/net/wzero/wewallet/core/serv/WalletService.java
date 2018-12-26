@@ -1,7 +1,8 @@
 package net.wzero.wewallet.core.serv;
 
+import java.util.List;
+
 import net.wzero.wewallet.core.domain.Card;
-import net.wzero.wewallet.core.domain.Mnemonic;
 
 public interface WalletService {
 
@@ -17,5 +18,5 @@ public interface WalletService {
 	 * @param mnemonic
 	 * @return
 	 */
-	Card createCard(Mnemonic mnemonic);
+	Card createCard(List<String> words,String pwd);
 }

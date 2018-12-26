@@ -1,7 +1,12 @@
 package com.quincysx.crypto.ethereum.keystore;
 
 public class CipherException extends Exception {
-    public CipherException(String message) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8229131461013773164L;
+
+	public CipherException(String message) {
         super(message);
     }
 

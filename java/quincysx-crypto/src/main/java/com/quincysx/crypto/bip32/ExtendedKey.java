@@ -15,17 +15,6 @@
  */
 package com.quincysx.crypto.bip32;
 
-import com.quincysx.crypto.ECKeyPair;
-import com.quincysx.crypto.ECPublicKey;
-import com.quincysx.crypto.Key;
-import com.quincysx.crypto.utils.Base58Check;
-
-import org.spongycastle.asn1.sec.SECNamedCurves;
-import org.spongycastle.asn1.x9.X9ECParameters;
-import org.spongycastle.crypto.generators.SCrypt;
-import org.spongycastle.math.ec.ECPoint;
-import org.spongycastle.util.Arrays;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -44,6 +33,17 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.spongycastle.asn1.sec.SECNamedCurves;
+import org.spongycastle.asn1.x9.X9ECParameters;
+import org.spongycastle.crypto.generators.SCrypt;
+import org.spongycastle.math.ec.ECPoint;
+import org.spongycastle.util.Arrays;
+
+import com.quincysx.crypto.ECKeyPair;
+import com.quincysx.crypto.ECPublicKey;
+import com.quincysx.crypto.Key;
+import com.quincysx.crypto.utils.Base58Check;
 
 /**
  * Key Generator following BIP32 https://en.bitcoin.it/wiki/BIP_0032

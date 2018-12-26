@@ -184,4 +184,13 @@ public class TestAction {
 		EthECKeyPair eKey = EthECKeyPair.parse(master);
 		System.out.println(eKey.getAddress());
 	}
+	@Test
+	public void doAction11() {
+
+		String words = "derive horror enhance agent steel card\nquality\r\nsnap post grape donate wagon";
+		words = words.replaceAll("\r\n", " ");
+		List<String> mnemonic =  Arrays.asList(words.split("[\\s|\n]"));
+		System.out.println(mnemonic.size());
+		mnemonic.stream().forEach(w-> System.out.println(w));
+	}
 }
