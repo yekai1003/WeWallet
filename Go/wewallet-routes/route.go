@@ -1,12 +1,13 @@
 package routes
 
 import (
-	"crypto/sha256"
-	"errors"
+	//"crypto/sha256"
+	//"errors"
 	"fmt"
 	"net/http"
-	"os"
-	"strconv"
+
+	//"os"
+	//"strconv"
 
 	"go-wewallet/dbs"
 	"go-wewallet/eths"
@@ -68,6 +69,8 @@ func Register(c echo.Context) error {
 	}
 	sess.Values["address"] = address
 	sess.Save(c.Request(), c.Response())
+
+	//助记词、私钥提供
 	return nil
 }
 
@@ -111,6 +114,20 @@ func Login(c echo.Context) error {
 	sess.Values["address"] = rows["address"]
 	sess.Save(c.Request(), c.Response())
 	return nil
+}
+
+//找回密码
+func Retrieve(c echo.Context) error {
+	//1. 响应数据结构初始化
+	var resp utils.Resp
+	resp.Errno = utils.RECODE_OK
+	defer utils.ResponseData(c, &resp)
+	//查询数据库
+	
+	
+	
+	
+		
 }
 
 //session获取
