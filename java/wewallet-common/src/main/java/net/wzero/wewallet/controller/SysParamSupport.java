@@ -3,11 +3,10 @@ package net.wzero.wewallet.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
+import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
 import net.wzero.wewallet.domain.MemberInfo;
 import net.wzero.wewallet.domain.SessionData;
@@ -18,9 +17,8 @@ import net.wzero.wewallet.serv.SessionService;
 import net.wzero.wewallet.serv.ThreadLocalService;
 import net.wzero.wewallet.utils.AppConstants;
 
+@Slf4j
 public class SysParamSupport {
-
-	private static final Logger logger = (Logger) LoggerFactory.getLogger(SysParamSupport.class);
 	
 	@Autowired
 	private ThreadLocalService sysParamService;
@@ -51,8 +49,8 @@ public class SysParamSupport {
 		String token = ((SysParam)this.sysParamService.get()).getToken();
 		if(token == null) throw new WalletException("token_is_null","token不能为空");
 		SessionData sd = this.sessionService.find(token);
-		logger.info("token->\t"+token);
-		logger.info("session->\t"+sd);
+		log.info("token->\t"+token);
+		log.info("session->\t"+sd);
 		if(sd == null)
 			throw new WalletException("token_is_invalid","token错误或者已失效，请从新获取");
 		return sd;
@@ -83,6 +81,4 @@ public class SysParamSupport {
 		if(wxAppIdStr == null) throw new WalletException("weixin_login_not_allowed", "客户端不允许微信登录或者未配置微信登录");
 		return Integer.parseInt(wxAppIdStr);
 	}
-	
-	
 }

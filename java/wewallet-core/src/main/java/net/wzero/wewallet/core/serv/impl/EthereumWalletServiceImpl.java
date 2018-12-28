@@ -16,6 +16,7 @@ import com.quincysx.crypto.ethereum.EthECKeyPair;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
+import net.wzero.wewallet.controller.SysParamSupport;
 import net.wzero.wewallet.core.domain.Card;
 import net.wzero.wewallet.core.domain.CardType;
 import net.wzero.wewallet.core.domain.EthereumCard;
@@ -27,7 +28,7 @@ import net.wzero.wewallet.utils.AppConstants;
 
 @Slf4j
 @Service("walletService")
-public class EthereumWalletServiceImpl implements WalletService {
+public class EthereumWalletServiceImpl extends SysParamSupport implements WalletService {
 
 	@Autowired
 	private CryptoService cryptoService;
@@ -56,7 +57,7 @@ public class EthereumWalletServiceImpl implements WalletService {
 			card.setAmount(new BigDecimal(0));
 			card.setCardType(ct);// 需要传递参数
 			card.setKeystore(keystore);//
-			card.setMemberId(0);
+			card.setMemberId(this.getMember().getId());
 			card.setPath("m/44'/60'/0'/0/0");
 			// 保存
 			return this.cardRepository.save(card);
@@ -87,7 +88,7 @@ public class EthereumWalletServiceImpl implements WalletService {
 			card.setAmount(new BigDecimal(0));
 			card.setCardType(ct);// 需要传递参数
 			card.setKeystore(keystore);//
-			card.setMemberId(0);
+			card.setMemberId(this.getMember().getId());
 			card.setPath("m/44'/60'/0'/0/0");//以太坊现在默认
 			// 保存
 			return this.cardRepository.save(card);

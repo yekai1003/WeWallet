@@ -18,7 +18,7 @@ import net.wzero.wewallet.utils.AppConstants;
 
 @RestController
 @RequestMapping("/wallet")
-public class WalletController {
+public class WalletController extends BaseController {
 
 	@Autowired
 	private WalletService walletService;
@@ -85,6 +85,6 @@ public class WalletController {
 	 */
 	@RequestMapping("/listCards")
 	public List<Card> listCards(){
-		return this.cardRepository.findByMemberId(0);
+		return this.cardRepository.findByMemberId(this.getMember().getId());
 	}
 }
