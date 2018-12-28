@@ -1,0 +1,22 @@
+{
+  "name": "wallet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/start.js"
+  },
+  "author": "Asciphx",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "formidable": "^1.2.1",
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
+    "imageinfo": "^1.0.4",
+    "mysql": "^2.16.0",
+    "node-schedule": "^1.3.1",
+    "path": "^0.12.7"
+  }
+}

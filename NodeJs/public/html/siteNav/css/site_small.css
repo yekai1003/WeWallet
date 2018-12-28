@@ -1,0 +1,249 @@
+@charset "utf-8";
+body{
+	background:rgb(8, 102, 164);
+	/* background:-webkit-gradient(linear, 0% 0%, 0% 0%, from(rgb(8, 102, 164)), to(rgb(77, 169, 232))); 
+	background: -moz-linear-gradient(top, rgb(8, 102, 164), rgb(77, 169, 232));
+	background:-o-gradient(linear, 0% 0%, 0% 0%, from(rgb(8, 102, 164)), to(rgb(77, 169, 232)));  */
+}
+#main {
+	width:100%;
+	overflow:hidden;
+	width:840px;
+}
+.stable{
+	margin-left: 12px;
+	cursor:pointer;
+	color:#fff;
+	font-size:14px;
+	background-color: transparent;
+	border:none;
+	outline: 0;
+}
+#main a{
+	text-decoration:none;
+}
+
+#main a:hover{
+	text-decoration:none;
+}
+/* -- 分类导航 -- */
+
+#site-list {
+	width: 840px;
+	position: absolute;
+	left: 50%;
+	margin-left: -420px;
+}
+#site-list .nav {
+	width:733px;
+	margin:15px auto 0px auto;
+	height:90px;
+	padding: 0px;
+}
+#site-list .nav .img {
+	width:65px;
+	height:65px;
+	display:block;
+	margin:0px auto 10px auto;
+}
+
+#site-list .popular {
+	background:url(../images/popular.png);
+	background-size:100% 100%;
+	_background:none;
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../images/popular.png',sizingMethod = 'scale');
+}
+
+#site-list .music {
+	background:url(../images/music.png);
+	_background:none;
+	background-size:100% 100%;
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../images/music.png',sizingMethod = 'scale');
+}
+
+#site-list .game {
+	background:url(../images/game.png);
+	_background:none;
+	background-size:100% 100%;
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../images/game.png',sizingMethod = 'scale');
+}
+
+#site-list .video {
+	background:url(../images/video.png);
+	_background:none;
+	background-size:100% 100%;
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../images/video.png',sizingMethod = 'scale');
+}
+
+#site-list .book {
+	background:url(../images/book.png);
+	_background:none;
+	background-size:100% 100%;
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../images/book.png',sizingMethod = 'scale');
+}
+
+#site-list .shopping {
+	background:url(../images/shopping.png);
+	_background:none;
+	background-size:100% 100%;
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../images/shopping.png',sizingMethod = 'scale');
+}
+
+#site-list .nav a {
+	color:#fff;
+	text-shadow:1px 1px 4px #000;
+	font-size:14px;
+}
+
+
+#site-list .nav .title {
+	filter:Shadow(Color = #333333,Direction=145,Strength=4);
+	zoom:1;
+}
+
+#site-list .nav li {
+	float:left;
+	width:122px;
+	text-align:center;
+	line-height:1;
+	display:inline;
+}
+
+#site-list .sepr {
+	height:30px;
+}
+
+#site-list .bg-0 {
+	background:url(../images/sepr-01.png) no-repeat;
+	background-size: 100% auto;
+}
+
+#site-list .bg-1 {
+	background:url(../images/sepr-02.png) no-repeat;
+	background-size: 100% auto;
+	display:none;
+}
+
+#site-list .bg-2 {
+	background:url(../images/sepr-03.png) no-repeat;
+	background-size: 100% auto;
+	display:none;
+}
+
+#site-list .bg-3 {
+	background:url(../images/sepr-04.png) no-repeat;
+	background-size: 100% auto;
+	display:none;
+}
+
+#site-list .bg-4 {
+	background:url(../images/sepr-05.png) no-repeat;
+	background-size: 100% auto;
+	display:none;
+}
+
+#site-list .bg-5 {
+	background:url(../images/sepr-06.png) no-repeat;
+	background-size: 100% auto;
+ 	display:none;
+}
+
+#site-list .list {
+	width:765px;
+	margin:0 auto;
+	overflow:hidden;
+	position:relative;
+	height:300px;
+}
+
+#site-list .list ul {
+	display:none;
+	position:absolute;
+}
+
+#site-list .list .on {
+	display:block;
+}
+
+#site-list .list li {
+	float:left;
+	width:66px;
+	text-align:center;
+	line-height:2;
+	margin:0 24px;
+	display:inline;
+}
+
+#site-list .more {
+	position:absolute;
+}
+
+#site-list .list img {
+	width:60px;
+	height:60px;
+	display:block;
+	margin:0 auto;
+}
+
+#site-list .list a {
+	color:#fff;
+	text-shadow:1px 1px 4px#000;
+	overflow:hidden;
+	font-size:12px;
+}
+
+#site-list .list span {
+	white-space:nowrap;
+	overflow:hidden;
+	display: block;
+	text-overflow: ellipsis;
+}
+
+#site-list .list.title {
+	filter:Shadow(Color = #333333,Direction = 145,Strength = 4);
+	zoom:1;
+}
+
+#site-list .more {
+	filter:Shadow(Color = #333333,Direction = 145,Strength = 4);
+	zoom:1;
+}
+ul li img {
+	border:0;
+}
+.worldcup {
+    background-image: url(../images/worldcup.png);
+    background-repeat: no-repeat;
+    background-color: #FFF;
+    background-size: 100%;
+    width:248px;
+    height:248px;
+    border-radius: 3px;
+    float: left;
+    cursor:pointer;
+}
+.comingWords {
+    color: rgb(189, 5, 56);
+    text-shadow: none;
+    position: absolute;
+    text-align: center;
+    top: 85px;
+    font-size: 31px;
+    word-wrap: break-word;
+    width: 248px;
+    height: 70px;
+}
+.comingWords > div  {
+    float:left;
+}
+.comingWords .leftCountry, .comingWords .rightCountry {
+    width: 104px;
+    text-align: center;
+    background-repeat: no-repeat;
+    background-position: 37px 37px;
+    height: 100%;
+    font-style:italic;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
