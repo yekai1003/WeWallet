@@ -1,5 +1,6 @@
 package net.wzero.wewallet.gateway.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -9,10 +10,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import net.wzero.wewallet.domain.EntityBase;
 @Entity
-public class WechatLogin extends EntityBase {
+public class MemberWechat extends EntityBase implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8013343710678023715L;
 	@Id
 	@GeneratedValue
 	private Integer id;
@@ -47,6 +54,12 @@ public class WechatLogin extends EntityBase {
 	private Integer groupId;
 	@Column
 	private Long[] tagIds;
+	@JsonIgnore
+	private Integer clientId;
+	@JsonIgnore
+	private Integer appId;
+	@JsonIgnore
+	private Integer appType;
 	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
 	private Date created;
 	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", updatable = false)
@@ -158,6 +171,24 @@ public class WechatLogin extends EntityBase {
 	}
 	public void setTagIds(Long[] tagIds) {
 		this.tagIds = tagIds;
+	}
+	public Integer getClientId() {
+		return clientId;
+	}
+	public void setClientId(Integer clientId) {
+		this.clientId = clientId;
+	}
+	public Integer getAppId() {
+		return appId;
+	}
+	public void setAppId(Integer appId) {
+		this.appId = appId;
+	}
+	public Integer getAppType() {
+		return appType;
+	}
+	public void setAppType(Integer appType) {
+		this.appType = appType;
 	}
 	
 }

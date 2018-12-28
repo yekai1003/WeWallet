@@ -19,14 +19,13 @@ public class MemberInfo extends DomainBase {
 	private String mark;
 	private String lastLoginIp;
 	private Date lastLoginTime;
-	private Integer defaultCustomerId;
 	private Map<String, String> mData;
 	private List<Integer> apis;
 	private List<Integer> clients;
-	private List<Integer> companies;
 	private String openId;
 	private String unionId;
 	private String email;
+	private Integer groupId;
 	
 	public Integer getId() {
 		return id;
@@ -76,12 +75,6 @@ public class MemberInfo extends DomainBase {
 	public void setLastLoginTime(Date lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
 	}
-	public Integer getDefaultCustomerId() {
-		return defaultCustomerId;
-	}
-	public void setDefaultCustomerId(Integer defaultCustomerId) {
-		this.defaultCustomerId = defaultCustomerId;
-	}
 	public Map<String, String> getmData() {
 		return mData;
 	}
@@ -100,12 +93,6 @@ public class MemberInfo extends DomainBase {
 	public void setClients(List<Integer> clients) {
 		this.clients = clients;
 	}
-	public List<Integer> getCompanies() {
-		return companies;
-	}
-	public void setCompanies(List<Integer> companies) {
-		this.companies = companies;
-	}
 	public String getOpenId() {
 		return openId;
 	}
@@ -123,6 +110,12 @@ public class MemberInfo extends DomainBase {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public Integer getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
 	}
 	
 }

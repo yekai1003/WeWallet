@@ -6,8 +6,12 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import net.wzero.wewallet.domain.EntityBase;
@@ -27,6 +31,9 @@ public class Member extends EntityBase {
 	 */
 	@Column
 	private String phone;
+
+	@Column
+	private String email;
 	
 	@Column
 	private Boolean enable;
@@ -37,6 +44,16 @@ public class Member extends EntityBase {
 	@Column
 	private Date lastLoginTime;
 
+	@Column
+	private String mark;
+
+	@OneToOne(mappedBy="member")
+	private UserResource userResource;
+
+	@JoinColumn(name="group_id")
+	@ManyToOne(fetch=FetchType.LAZY)
+	private UserGroup group;
+	
 	@Column
 	@Convert(converter = KeyValueStringConverter.class)
 	private Map<String, String> mData;
@@ -50,6 +67,12 @@ public class Member extends EntityBase {
 	}
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	public UserGroup getGroup() {
+		return group;
+	}
+	public void setGroup(UserGroup group) {
+		this.group = group;
 	}
 	public String getNickname() {
 		return nickname;
@@ -98,6 +121,24 @@ public class Member extends EntityBase {
 	}
 	public void setUpdated(Date updated) {
 		this.updated = updated;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getMark() {
+		return mark;
+	}
+	public void setMark(String mark) {
+		this.mark = mark;
+	}
+	public UserResource getUserResource() {
+		return userResource;
+	}
+	public void setUserResource(UserResource userResource) {
+		this.userResource = userResource;
 	}
 	
 }

@@ -1,22 +1,30 @@
 package net.wzero.wewallet.gateway.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import net.wzero.wewallet.domain.EntityBase;
 
 @Entity
-public class PhoneLogin extends EntityBase {
+@Table(name="member_phones",indexes= {@Index(columnList = "number")})
+public class MemberPhone extends EntityBase implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2403371271127578703L;
 	@Id
 	@GeneratedValue
 	private Integer id;
-	private String phone;
+	private String number;
 	@JoinColumn(name="member_id")
 	@OneToOne
 	private Member member;
@@ -49,11 +57,10 @@ public class PhoneLogin extends EntityBase {
 	public void setUpdated(Date updated) {
 		this.updated = updated;
 	}
-	public String getPhone() {
-		return phone;
+	public String getNumber() {
+		return number;
 	}
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setNumber(String number) {
+		this.number = number;
 	}
-	
 }

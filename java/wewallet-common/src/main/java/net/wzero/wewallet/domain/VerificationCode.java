@@ -8,6 +8,7 @@ public class VerificationCode extends SessionBase {
 	private static final long serialVersionUID = 8524057904714099505L;
 	private String phone;
 	private String Code;
+	private String comCode;
 	public String getPhone() {
 		return phone;
 	}
@@ -19,5 +20,11 @@ public class VerificationCode extends SessionBase {
 	}
 	public void setCode(String code) {
 		Code = code;
+	}
+	public String getComCode() {
+		return comCode;
+	}
+	public void setComCode(String comCode) {
+		this.comCode = comCode;
 	}
 }
