@@ -2,17 +2,23 @@
 <html>
 <head><link rel="shortcut icon"href="#"/>
 <meta http-equiv="Content-type" content="text/html;charset=utf-8" />
-<title>wallet</title>
+<title>WeWallet</title>
 <link rel="stylesheet" href="css/imageAuthor.css">
 <style type="text/css">
 </style>
 <script type="text/javascript" src="js\jquery.min.js"></script>
+<script type="text/javascript" src="js\md5.js"></script>
 </head>
 <!-- ul>li>a
 ul>(li>a[click=#])*3
 ul>(li>a[href=#])*3
 ul>(li>a)*3 -->
 <body>
+    <div>
+        <ul>
+            <li><a href="#"><script>document.write(md5_vm_test()+" <=> 123456:");document.write(hex_md5("123456"))</script></a></li>
+        </ul>
+    </div>
     <div>
        <object data="html\siteNav\index.html" type="text/x-scriptlet" style="overflow:hidden;border:0px" width="100%" height="500"></object>
     </div>
