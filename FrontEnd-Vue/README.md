@@ -7,7 +7,7 @@ api接口域名在vue.config.js中的devServer-proxy-target处配置，具体接
 ## Project setup
 ```
 npm install
-// npm i 安装所有依赖
+//已把所有nodemodule上传,可不用执行
 ```
 
 ### Compiles and hot-reloads for development
