@@ -2,20 +2,18 @@ package net.wzero.wewallet.serv.impl;
 
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 
+import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.domain.SessionData;
 import net.wzero.wewallet.serv.SessionService;
 import net.wzero.wewallet.utils.TimeUtils;
 
+@Slf4j
 public class SessionServiceImpl implements SessionService {
 
-	private final static Logger log = LoggerFactory.getLogger(SessionServiceImpl.class);
-	
 	@Override
 	@CachePut(value="session",key="#sd.token")
 	public SessionData save(SessionData sd) {

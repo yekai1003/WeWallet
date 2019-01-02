@@ -3,28 +3,25 @@ package net.wzero.wewallet.gateway;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.domain.SysParam;
 import net.wzero.wewallet.serv.ThreadLocalService;
 import net.wzero.wewallet.utils.AppConstants;
 
+@Slf4j
 @Component
 public class SystemParamInterceptor  extends HandlerInterceptorAdapter  {
 
-	@SuppressWarnings("unused")
-	private static final Logger logger = (Logger) LoggerFactory.getLogger(SystemParamInterceptor.class);
-	
 	@Autowired
 	private ThreadLocalService sysParamService;
 	
 	public boolean preHandle(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response, Object handler) throws Exception 
 	{
-		//logger.info("[SystemParamInterceptor]  preHandle");
+		log.info("[SystemParamInterceptor]  preHandle");
 		//client 
 		String clientIdStr = request.getParameter(AppConstants.URL_CLIENT_ID_KEY);
 		//if(clientIdStr == null) throw new PlatformException("client_is_requested","必须传递clientid参数");

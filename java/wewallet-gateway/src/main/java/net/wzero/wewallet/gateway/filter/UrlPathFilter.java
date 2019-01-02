@@ -2,23 +2,21 @@ package net.wzero.wewallet.gateway.filter;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 
+import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
 import net.wzero.wewallet.gateway.domain.ApiData;
 import net.wzero.wewallet.gateway.serv.ApiService;
 import net.wzero.wewallet.gateway.serv.OutAccessApiService;
 import net.wzero.wewallet.utils.AppConstants;
 
+@Slf4j
 public class UrlPathFilter extends ZuulFilter {
-	private static Logger log = LoggerFactory.getLogger(UrlPathFilter.class);
-
 	@Autowired
 	private ApiService apiService;
 	@Autowired
