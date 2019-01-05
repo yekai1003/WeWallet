@@ -14,6 +14,7 @@ import net.wzero.wewallet.core.domain.Transaction;
 import net.wzero.wewallet.core.repo.TransactionRepository;
 import net.wzero.wewallet.core.serv.TxService;
 import net.wzero.wewallet.res.OkResponse;
+import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
 @RestController
 @RequestMapping("/tx")
@@ -47,13 +48,17 @@ public class TxController extends BaseController {
 			@RequestParam(name = "payPwd") String payPwd,
 			@RequestParam(name = "toAddress") String toAddress,
 			@RequestParam(name = "value") String value,
-			@RequestParam(name = "unit") String unit) {
+			@RequestParam(name = "unit") String unit,
+			@RequestParam(name = "env",required=false) String env) {
 		
 		BigDecimal val = Convert.toWei(new BigDecimal(value), Convert.Unit.fromString(unit));
 		if(val.compareTo(new BigDecimal("0")) <= 0) 
 			throw new WalletException("value_error","转账金额必须大于0");
-		
-		return this.txSerrvice.createTransaction(this.getMember().getId(), cardId, toAddress, val, payPwd);
+		//决定环境
+		if(env == null)
+			env = this.getMember().getCurrEnv();
+		if(env == null) throw new WalletException("env_not_set","选择当前钱包环境");
+		return this.txSerrvice.createTransaction(this.getMember().getId(), cardId, toAddress, val,EthEnv.fromString(env), payPwd);
 	}
 	@RequestMapping("/get")
 	public Transaction get(@RequestParam(name = "id") Integer id) {

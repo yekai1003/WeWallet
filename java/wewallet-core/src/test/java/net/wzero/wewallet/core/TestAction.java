@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.wzero.wewallet.core.domain.CardType;
 import net.wzero.wewallet.utils.AppConstants;
+import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
 public class TestAction {
 
@@ -197,5 +198,10 @@ public class TestAction {
 		BigInteger balance = new BigInteger(ethGetBalance.getResult(),16);
 		System.out.println(balance.toString(10));
 		
+	}
+	@Test
+	public void doAction9() {
+		EthEnv envStr = EthEnv.fromString("123");
+		System.out.println(envStr);
 	}
 }

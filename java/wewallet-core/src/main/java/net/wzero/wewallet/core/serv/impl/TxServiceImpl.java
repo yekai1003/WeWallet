@@ -12,6 +12,7 @@ import net.wzero.wewallet.core.repo.CardRepository;
 import net.wzero.wewallet.core.repo.TransactionRepository;
 import net.wzero.wewallet.core.serv.TxService;
 import net.wzero.wewallet.core.stream.CoreMessage;
+import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
 @Service
 public class TxServiceImpl implements TxService {
@@ -25,7 +26,7 @@ public class TxServiceImpl implements TxService {
 	private CoreMessage coreMessage;
 	
 	@Override
-	public Transaction createTransaction(Integer memberId, Integer cardId, String to, BigDecimal value, String pwd) {
+	public Transaction createTransaction(Integer memberId, Integer cardId, String to, BigDecimal value,EthEnv env, String pwd) {
 		// memberId 校验应该放在 controller 里做好
 		// 获取卡片信息
 		Card card = this.cardRepository.findOne(cardId);
@@ -33,6 +34,7 @@ public class TxServiceImpl implements TxService {
 		// 插入数据库
 		Transaction tx = new Transaction();
 		tx.setMemberId(memberId);
+		tx.setEnv(env.getName());
 		tx.setStatus("created");
 		tx.setFromAddr(card.getAddr());//还不知道 addr的格式 是否以0x 开头
 		tx.setToAddr(to);

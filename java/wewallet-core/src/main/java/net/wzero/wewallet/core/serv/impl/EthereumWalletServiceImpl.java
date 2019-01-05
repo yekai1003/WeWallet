@@ -16,7 +16,6 @@ import com.quincysx.crypto.ethereum.EthECKeyPair;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
-import net.wzero.wewallet.controller.SysParamSupport;
 import net.wzero.wewallet.core.domain.Card;
 import net.wzero.wewallet.core.domain.CardType;
 import net.wzero.wewallet.core.domain.EthereumCard;

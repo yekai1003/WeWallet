@@ -11,7 +11,7 @@ import net.wzero.wewallet.core.serv.EthService;
 import net.wzero.wewallet.core.stream.WorkerMessage;
 
 @Component
-public class NewTransferWorker {
+public class EthTransferWorker {
 
 	@Autowired
 	private EthService ethService;

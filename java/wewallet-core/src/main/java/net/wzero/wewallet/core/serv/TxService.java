@@ -3,6 +3,7 @@ package net.wzero.wewallet.core.serv;
 import java.math.BigDecimal;
 
 import net.wzero.wewallet.core.domain.Transaction;
+import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
 public interface TxService {
 	
@@ -15,7 +16,7 @@ public interface TxService {
 	 * @param pwd 不保存到数据库，直接通过消息发出去（只有交易的时候需要）查询的时候不需要
 	 * @return
 	 */
-	Transaction createTransaction(Integer memberId,Integer cardId,String to,BigDecimal value,String pwd);
+	Transaction createTransaction(Integer memberId,Integer cardId,String to,BigDecimal value,EthEnv env,String pwd);
 	
 	
 }

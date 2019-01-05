@@ -3,7 +3,10 @@ package net.wzero.wewallet.core.serv.impl;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.CipherException;
@@ -27,12 +30,24 @@ import net.wzero.wewallet.core.domain.Transaction;
 import net.wzero.wewallet.core.repo.CardRepository;
 import net.wzero.wewallet.core.serv.EthService;
 import net.wzero.wewallet.core.utils.KeystoreUtils;
-import net.wzero.wewallet.utils.AppConstants;
+import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
 @Slf4j
 @Service
-public class EthServiceImpl implements EthService {
+public class EthServiceImpl implements EthService,InitializingBean {
 
+	private Map<String,Web3j> ethEnvMap = new HashMap<>();
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		//循环初始化 Web3j客户端
+		for (EthEnv env : EthEnv.values()) {
+			Web3j web3j = Web3j.build(new HttpService(env.getUrl()));
+
+			this.ethEnvMap.put(env.getName(), web3j);
+		}
+		
+	}
 	@Autowired
 	private CardRepository cardRepository;
 	
@@ -44,7 +59,8 @@ public class EthServiceImpl implements EthService {
 			ECKeyPair kp = KeystoreUtils.readKeystore(card.getKeystore(), pwd);
 			// 获取认证信息
 			Credentials credentials = Credentials.create(kp);
-			Web3j web3j = Web3j.build(new HttpService(AppConstants.POPSTEN));
+			Web3j web3j = ethEnvMap.get(transaction.getEnv());
+			if(web3j == null) throw new WalletException("env_error","不存在指定环境");
 			// 获取认证信息
 			TransactionReceipt transactionReceipt = Transfer
 					.sendFunds(web3j, credentials, transaction.getToAddr(), new BigDecimal(transaction.getValue()), Convert.Unit.WEI).send();
@@ -86,5 +102,6 @@ public class EthServiceImpl implements EthService {
 			throw new WalletException("send_transaction_failed","未知错误");
 		}
 	}
+
 
 }

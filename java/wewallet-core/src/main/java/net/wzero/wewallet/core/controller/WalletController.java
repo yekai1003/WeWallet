@@ -14,7 +14,10 @@ import net.wzero.wewallet.core.domain.Mnemonic;
 import net.wzero.wewallet.core.repo.CardRepository;
 import net.wzero.wewallet.core.serv.CryptoService;
 import net.wzero.wewallet.core.serv.WalletService;
+import net.wzero.wewallet.domain.SessionData;
+import net.wzero.wewallet.res.OkResponse;
 import net.wzero.wewallet.utils.AppConstants;
+import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
 @RestController
 @RequestMapping("/wallet")
@@ -101,5 +104,19 @@ public class WalletController extends BaseController {
 	@RequestMapping("/refresh")
 	public Card refresh(@RequestParam(name = "id") Integer id) {
 		throw new WalletException("not_implemented"," 未实现");
+	}
+	@RequestMapping("/setEnv")
+	public OkResponse setEnv(@RequestParam(name = "env") String envStr) {
+		try {
+			EthEnv env = EthEnv.fromString(envStr);
+			
+			SessionData sd = this.getSessionData();
+			sd.getMember().setCurrEnv(env.getName());
+			this.sessionService.save(sd);
+			return new OkResponse();
+		}catch(java.lang.IllegalArgumentException ex) {
+			ex.printStackTrace();
+			throw new WalletException("env_not_found","指定的环境找不到");
+		}
 	}
 }
