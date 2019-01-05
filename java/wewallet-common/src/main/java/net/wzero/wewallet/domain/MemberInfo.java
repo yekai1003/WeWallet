@@ -26,6 +26,10 @@ public class MemberInfo extends DomainBase {
 	private String unionId;
 	private String email;
 	private Integer groupId;
+	/**
+	 * 当前 rpc环境
+	 */
+	private String currEnv;
 	
 	public Integer getId() {
 		return id;
@@ -116,6 +120,12 @@ public class MemberInfo extends DomainBase {
 	}
 	public void setGroupId(Integer groupId) {
 		this.groupId = groupId;
+	}
+	public String getCurrEnv() {
+		return currEnv;
+	}
+	public void setCurrEnv(String currEnv) {
+		this.currEnv = currEnv;
 	}
 	
 }

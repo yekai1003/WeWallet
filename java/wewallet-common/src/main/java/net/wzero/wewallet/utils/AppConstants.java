@@ -49,4 +49,61 @@ public final class AppConstants {
 	 */
 	public static final String LOCALHOST = "http://localhost:8545";
 	
+	public enum EthEnv{
+		/** 
+		 * Main Ethereum Network
+		 */
+		MAINNET("mainnet","https://mainnet.infura.io/v3/3cef33da8db74456945739de85d48457"),
+		/** 
+		 * Ropsten Test Network
+		 */
+		POPSTEN("popsten","https://ropsten.infura.io/v3/3cef33da8db74456945739de85d48457"),
+		/**
+		 * Kovan Test Network
+		 */
+		KOVAN("kovan","https://kovan.infura.io/v3/3cef33da8db74456945739de85d48457"),
+		/**
+		 * Rinkeby Test Network
+		 */
+		PINKEBY("pinkeby","https://rinkeby.infura.io/v3/3cef33da8db74456945739de85d48457"),
+		/**
+		 * localhost 8545 
+		 */
+		LOCALHOST("localhost","http://localhost:8545");
+		
+		private String name;
+		private String url;
+		
+		private EthEnv(String name,String url) {
+			this.name = name;
+			this.url=url;
+		}
+		public static EthEnv fromString(String name) {
+			if (name != null) {
+                for (EthEnv env : EthEnv.values()) {
+                    if (name.equalsIgnoreCase(env.name)) {
+                        return env;
+                    }
+                }
+            }
+            return EthEnv.valueOf(name);
+		}
+		public static String getUrl(String name) {
+			return EthEnv.fromString(name).url;
+		}
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+		public String getUrl() {
+			return url;
+		}
+		public void setUrl(String url) {
+			this.url = url;
+		}
+		
+	}
+	
 }

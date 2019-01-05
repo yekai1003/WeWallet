@@ -23,7 +23,7 @@ public class SysParamSupport {
 	@Autowired
 	private ThreadLocalService sysParamService;
 	@Autowired
-	private SessionService sessionService;
+	protected SessionService sessionService;
 	@Autowired
 	private RestTemplate restTemplate;
 	
