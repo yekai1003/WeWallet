@@ -24,4 +24,29 @@ public final class AppConstants {
 	public static final int LOGIN_TYPE_EMAIL = 3;//邮件登陆
 	public static final int LOGIN_TYPE_WEIXIN = 10;//微信登陆
 	public static final int LOGIN_TYPE_ALIPAY = 11;//支付宝？
+	
+	//-------------------Infura.io 的钱包节点 WeWallet 项目--------------------
+	public static final String WEWALLET_PROJECT_ID = "3cef33da8db74456945739de85d48457";
+	public static final String WEWALLET_PROJECT_SECRET = "b928943494b242148ec23669d4c7e4c8";
+	/** 
+	 * Main Ethereum Network
+	 */
+	public static final String MAINNET = "https://mainnet.infura.io/v3/3cef33da8db74456945739de85d48457";
+	/** 
+	 * Ropsten Test Network
+	 */
+	public static final String POPSTEN = "https://ropsten.infura.io/v3/3cef33da8db74456945739de85d48457";
+	/**
+	 * Kovan Test Network
+	 */
+	public static final String KOVAN = "https://kovan.infura.io/v3/3cef33da8db74456945739de85d48457";
+	/**
+	 * Rinkeby Test Network
+	 */
+	public static final String PINKEBY = "https://rinkeby.infura.io/v3/3cef33da8db74456945739de85d48457";
+	/**
+	 * localhost 8545 
+	 */
+	public static final String LOCALHOST = "http://localhost:8545";
+	
 }

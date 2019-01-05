@@ -2,6 +2,7 @@ package net.wzero.wewallet.core.domain;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -17,6 +18,7 @@ public class EthereumCard extends Card {
 	/**
 	 * 以太坊 使用keystore存储
 	 */
+	@Column(columnDefinition="text")
 	private String keystore;
 
 	public BigDecimal getAmount() {
