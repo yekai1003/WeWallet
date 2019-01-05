@@ -2,13 +2,21 @@ package net.wzero.wewallet.core;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
+import net.wzero.wewallet.core.stream.CoreMessage;
+import net.wzero.wewallet.core.stream.WorkerMessage;
 import net.wzero.wewallet.serv.SessionService;
+import net.wzero.wewallet.serv.SmsService;
 import net.wzero.wewallet.serv.ThreadLocalService;
 import net.wzero.wewallet.serv.impl.SessionServiceImpl;
+import net.wzero.wewallet.serv.impl.SmsServiceImpl;
 import net.wzero.wewallet.serv.impl.SysParamService;
 
+@EnableBinding(value= {CoreMessage.class,WorkerMessage.class})
 @SpringCloudApplication
 public class WewalletCoreApplication {
 
@@ -24,6 +32,16 @@ public class WewalletCoreApplication {
 	@Bean
 	public SessionService sessionService() {
 		return new SessionServiceImpl();
+	}
+
+	@Bean
+    @LoadBalanced//开启负载均衡的能力
+    RestTemplate restTemplate(){
+        return new RestTemplate();
+    }
+	@Bean
+	public SmsService smsService() {
+		return new SmsServiceImpl();
 	}
 }
 

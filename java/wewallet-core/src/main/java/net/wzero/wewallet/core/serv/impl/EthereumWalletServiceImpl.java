@@ -28,7 +28,7 @@ import net.wzero.wewallet.utils.AppConstants;
 
 @Slf4j
 @Service("walletService")
-public class EthereumWalletServiceImpl extends SysParamSupport implements WalletService {
+public class EthereumWalletServiceImpl implements WalletService {
 
 	@Autowired
 	private CryptoService cryptoService;
@@ -41,7 +41,7 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 	 * 默认遵循 BIP44
 	 */
 	@Override
-	public Card createCard(String pwd) {
+	public Card createCard(Integer memberId,String pwd) {
 		try {
 			// 取得卡类型
 			CardType ct = this.cardTypeRepository.getOne(AppConstants.ETHEREUM_CARD_TYPE);
@@ -57,7 +57,7 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 			card.setAmount(new BigDecimal(0));
 			card.setCardType(ct);// 需要传递参数
 			card.setKeystore(keystore);//
-			card.setMemberId(this.getMember().getId());
+			card.setMemberId(memberId);
 			card.setPath("m/44'/60'/0'/0/0");
 			// 保存
 			return this.cardRepository.save(card);
@@ -69,7 +69,7 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 	}
 
 	@Override
-	public Card createCard(List<String> words,String pwd) {
+	public Card createCard(Integer memberId,List<String> words,String pwd) {
 		// 取得卡类型
 		CardType ct = this.cardTypeRepository.getOne(AppConstants.ETHEREUM_CARD_TYPE);
 		try {
@@ -88,7 +88,7 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 			card.setAmount(new BigDecimal(0));
 			card.setCardType(ct);// 需要传递参数
 			card.setKeystore(keystore);//
-			card.setMemberId(this.getMember().getId());
+			card.setMemberId(memberId);
 			card.setPath("m/44'/60'/0'/0/0");//以太坊现在默认
 			// 保存
 			return this.cardRepository.save(card);
@@ -106,5 +106,11 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 		CoinPairDerive coinKeyPair = new CoinPairDerive(extendedKey);
 		ECKeyPair master = coinKeyPair.derive(address);
 		return EthECKeyPair.parse(master);
+	}
+
+	@Override
+	public Card refreshBalance(Integer cardId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

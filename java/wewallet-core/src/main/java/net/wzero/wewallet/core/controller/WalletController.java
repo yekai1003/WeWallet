@@ -51,7 +51,7 @@ public class WalletController extends BaseController {
 		}else {
 			throw new WalletException("not_supported","还不支持的币种");
 		}
-		Card card = this.walletService.createCard(pwd);
+		Card card = this.walletService.createCard(this.getMember().getId(),pwd);
 		//做些啥？
 		return card; 
 	}
@@ -77,7 +77,11 @@ public class WalletController extends BaseController {
 		}
 		//验证助记词是否符合要求
 		List<String> words =  Arrays.asList(mnemonic.replaceAll("\r\n", " ").split("[\\s|\n]"));
-		return this.walletService.createCard(words, pwd);
+		return this.walletService.createCard(this.getMember().getId(),words, pwd);
+	}
+	@RequestMapping("/get")
+	public Card get(@RequestParam(name = "id") Integer id) {
+		return this.cardRepository.findOne(id);
 	}
 	/**
 	 * 列出账户下所有的卡片
@@ -86,5 +90,16 @@ public class WalletController extends BaseController {
 	@RequestMapping("/listCards")
 	public List<Card> listCards(){
 		return this.cardRepository.findByMemberId(this.getMember().getId());
+	}
+	/**
+	 * 刷新余额
+	 * 方案1、同步刷新，可能会耗费很长时间
+	 * 方案2、异步刷新，UI需要多次主动调用 /core/wallet/get  来获取信息知道获取新信息
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping("/refresh")
+	public Card refresh(@RequestParam(name = "id") Integer id) {
+		throw new WalletException("not_implemented"," 未实现");
 	}
 }
