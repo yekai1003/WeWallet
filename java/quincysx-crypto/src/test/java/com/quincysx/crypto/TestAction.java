@@ -79,10 +79,10 @@ public class TestAction {
 	}
 	@Test //encrypt
 	public void doAction5() throws ValidationException, CipherException {
-		String pk = "f7ac407861822b2403c136c7031eb19698bc9548db4c377b7c994cb0811ca576";
+		String pk = "7222419c96716d209cca8d4737058c3d479c52b14e283ed551757adaee9e1d5f";
 		
 		ECKeyPair key = new ECKeyPair(Hex.decode(pk), true); 
-		System.out.println(key.getPublicKey());
+		//System.out.println(key.getPublicKey());
 		
 		EthECKeyPair ecKeyPair = EthECKeyPair.parse(key);
 		KeyStoreFile ksf = KeyStore.createStandard("123", ecKeyPair);
