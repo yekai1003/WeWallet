@@ -18,5 +18,5 @@ public interface TxService {
 	 */
 	Transaction createTransaction(Integer memberId,Integer cardId,String to,BigDecimal value,EthEnv env,String pwd);
 	
-	
+	void refreshTransaction(Transaction tx);
 }

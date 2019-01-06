@@ -12,8 +12,13 @@ import org.springframework.messaging.SubscribableChannel;
  *
  */
 public interface WorkerMessage {
+	// transfer
 	String TRANSFER_JOB_INPUT = "transferJobInput";
 	String TRANSFER_JOB_CALLBACK_OUTPUT = "transferJobCallbackOutput";
+	// Receipt
+	String GET_TRANSACTION_RECEIPT_INPUT  = "getTransactionReceiptInput";
+	String GET_TRANSACTION_RECEIPT_CALLBACK_OUTPUT = "getTransactionReceiptCallbackOutput";
+	// sms
 	String SMS_JOB_INPUT = "smsJobInput";
 
 	@Input(WorkerMessage.TRANSFER_JOB_INPUT)
@@ -21,6 +26,12 @@ public interface WorkerMessage {
 	
 	@Output(WorkerMessage.TRANSFER_JOB_CALLBACK_OUTPUT)
 	MessageChannel transferJobCallback();
+
+	@Input(WorkerMessage.GET_TRANSACTION_RECEIPT_INPUT)
+	SubscribableChannel getTransactionByHash();
+	
+	@Output(WorkerMessage.GET_TRANSACTION_RECEIPT_CALLBACK_OUTPUT)
+	MessageChannel getTransactionByHashCallback();
 
 	@Input(WorkerMessage.SMS_JOB_INPUT)
 	SubscribableChannel smsJob();

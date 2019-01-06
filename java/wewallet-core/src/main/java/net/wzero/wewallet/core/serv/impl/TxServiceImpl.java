@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
+import net.wzero.wewallet.WalletException;
 import net.wzero.wewallet.core.domain.Card;
 import net.wzero.wewallet.core.domain.Transaction;
 import net.wzero.wewallet.core.repo.CardRepository;
@@ -35,7 +36,7 @@ public class TxServiceImpl implements TxService {
 		Transaction tx = new Transaction();
 		tx.setMemberId(memberId);
 		tx.setEnv(env.getName());
-		tx.setStatus("created");
+		tx.setStatus("-1");
 		tx.setFromAddr(card.getAddr());//还不知道 addr的格式 是否以0x 开头
 		tx.setToAddr(to);
 		tx.setValue(value.toString());//wei 单位
@@ -45,6 +46,14 @@ public class TxServiceImpl implements TxService {
 		// 发送 交易发送 业务 消息 到RabbitMQ
 		this.coreMessage.transferJob().send(MessageBuilder.withPayload(tx).setHeader("p1", pwd).build());
 		return tx;
+	}
+
+	@Override
+	public void refreshTransaction(Transaction tx) {
+		if(tx.getTxHash() == null)
+			throw new WalletException("tx_hash_empty","交易hash 值为空，一般交易还没广播成功");
+		// 查询交易不需要授权
+		this.coreMessage.getTransactionByHash().send(MessageBuilder.withPayload(tx).build());
 	}
 
 }

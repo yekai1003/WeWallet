@@ -77,6 +77,14 @@ public class TxController extends BaseController {
 	 */
 	@RequestMapping("/refresh")
 	public OkResponse refresh(@RequestParam(name = "id") Integer id) {
-		throw new WalletException("not_implemented"," 未实现");
+		// 获取交易
+		Transaction tmp = this.transactionRepository.findOne(id);
+		if(tmp == null) throw new WalletException("id_not_exist","交易ID不存在");
+		// 检查操作者是否是自己
+		if(this.getMember().getId() != tmp.getMemberId())
+			throw new WalletException("op_failed","不能操作别人的交易");
+		// 异步完成
+		this.txSerrvice.refreshTransaction(tmp);
+		return new OkResponse();
 	}
 }

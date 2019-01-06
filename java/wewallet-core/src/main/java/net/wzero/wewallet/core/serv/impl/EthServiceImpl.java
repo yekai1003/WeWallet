@@ -13,6 +13,7 @@ import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
@@ -101,6 +102,32 @@ public class EthServiceImpl implements EthService,InitializingBean {
 			e.printStackTrace();
 			throw new WalletException("send_transaction_failed","未知错误");
 		}
+	}
+
+	@Override
+	public Transaction getTransactionReceipt(Transaction transaction) {
+		// 这里不需要卡片信息，因为 查询交易不需要签名
+//		EthereumCard card = (EthereumCard)this.cardRepository.findByMemberIdAndAddr(transaction.getMemberId(), transaction.getFromAddr());
+		// 通过交易的 环境获取 客户端实例
+		Web3j web3j = ethEnvMap.get(transaction.getEnv());
+
+		try {
+			EthGetTransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(transaction.getTxHash()).send();
+			log.info("transactionHash->\t" + transactionReceipt.getResult().getTransactionHash());
+			
+			transaction.setTxHash(transactionReceipt.getResult().getTransactionHash());
+			transaction.setStatus(new BigInteger(transactionReceipt.getResult().getStatus().substring(2),16).toString(10));
+			transaction.setGasLimit(DefaultGasProvider.GAS_LIMIT+"");
+			transaction.setGasPrice(DefaultGasProvider.GAS_PRICE+"");
+			transaction.setGasUsed(transactionReceipt.getResult().getGasUsed()+"");
+			transaction.setCumulativeGasUsed(transactionReceipt.getResult().getCumulativeGasUsed()+"");
+			return transaction;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("get_transaction_failed","应该是网络异常!");
+		}
+		
 	}
 
 
