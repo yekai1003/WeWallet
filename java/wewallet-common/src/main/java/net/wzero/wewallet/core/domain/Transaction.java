@@ -28,6 +28,10 @@ public class Transaction extends EntityBase {
 	 * 交易金额
 	 */
 	private String value;
+	/**
+	 * 如果是智能合约转账，这里会有数据
+	 */
+	private String contractAddr;
 	private String fromAddr;
 	private String toAddr;
 	private String env;
@@ -126,5 +130,11 @@ public class Transaction extends EntityBase {
 	}
 	public void setEnv(String env) {
 		this.env = env;
+	}
+	public String getContractAddr() {
+		return contractAddr;
+	}
+	public void setContractAddr(String contractAddr) {
+		this.contractAddr = contractAddr;
 	}
 }

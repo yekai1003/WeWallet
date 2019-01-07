@@ -111,9 +111,13 @@ public class TestAction {
 
 		BigInteger nonce = ethGetTransactionCount.getTransactionCount();
 		System.out.println("nonce->\t" + nonce);
-		// 创建 RawTransaction 对想
+		// 创建 RawTransaction 对象，这个创建方法是用来交易以太币
 		RawTransaction rawTransaction = RawTransaction.createEtherTransaction(nonce, DefaultGasProvider.GAS_PRICE,
 				BigInteger.valueOf(3000000l), toAddress, value);
+		// 这个方法是用来创建智能合约交易的，因为没带value，个人认为是这样
+		//RawTransaction.createTransaction(nonce, gasPrice, gasLimit, to, data)
+		//这个方法既可以创建只能合约交易，又可以创建以太币交易
+		//RawTransaction.createTransaction(nonce, gasPrice, gasLimit, to, value, data)
 		// 证书对象 从头keystore 获得，这里可能需要重写 WalletUtils对象
 		// Credentials credentials = WalletUtils.loadCredentials("123",
 		// "/path/to/walletfile");

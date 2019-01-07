@@ -6,5 +6,7 @@ public interface EthService {
 
 	Transaction sendTransaction(Transaction transaction,String pwd);
 	
+	Transaction sendTokenTransaction(Transaction transaction,String pwd);
+	
 	Transaction getTransactionReceipt(Transaction transaction);
 }

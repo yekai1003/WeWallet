@@ -3,23 +3,39 @@ package net.wzero.wewallet.core.serv.impl;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Bool;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.RawTransaction;
+import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.Transfer;
 import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
+import org.web3j.utils.Numeric;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -54,7 +70,7 @@ public class EthServiceImpl implements EthService,InitializingBean {
 	
 	@Override
 	public Transaction sendTransaction(Transaction transaction, String pwd) {
-		// TODO Auto-generated method stub
+		// ether 的发送交易，这里获取 card 对象的方式不对，后期需要通过restTemplate 获取
 		EthereumCard card = (EthereumCard)this.cardRepository.findByMemberIdAndAddr(transaction.getMemberId(), transaction.getFromAddr());
 		try {
 			ECKeyPair kp = KeystoreUtils.readKeystore(card.getKeystore(), pwd);
@@ -62,7 +78,7 @@ public class EthServiceImpl implements EthService,InitializingBean {
 			Credentials credentials = Credentials.create(kp);
 			Web3j web3j = ethEnvMap.get(transaction.getEnv());
 			if(web3j == null) throw new WalletException("env_error","不存在指定环境");
-			// 获取认证信息
+			// 发送交易
 			TransactionReceipt transactionReceipt = Transfer
 					.sendFunds(web3j, credentials, transaction.getToAddr(), new BigDecimal(transaction.getValue()), Convert.Unit.WEI).send();
 			log.info("transactionHash->\t" + transactionReceipt.getTransactionHash());
@@ -103,6 +119,93 @@ public class EthServiceImpl implements EthService,InitializingBean {
 			throw new WalletException("send_transaction_failed","未知错误");
 		}
 	}
+	
+	@Override
+	public Transaction sendTokenTransaction(Transaction transaction, String pwd) {
+		// Token 交易的发送,这里获取 card 对象的方式不对，后期需要通过restTemplate 获取
+		EthereumCard card = (EthereumCard)this.cardRepository.findByMemberIdAndAddr(transaction.getMemberId(), transaction.getFromAddr());
+		try {
+			ECKeyPair kp = KeystoreUtils.readKeystore(card.getKeystore(), pwd);
+			// 获取认证信息
+			Credentials credentials = Credentials.create(kp);
+			Web3j web3j = ethEnvMap.get(transaction.getEnv());
+			if(web3j == null) throw new WalletException("env_error","不存在指定环境");
+			// 获取一个发送账户的 有效nonce
+			EthGetTransactionCount ethGetTransactionCount = web3j
+					.ethGetTransactionCount(card.getAddr(), DefaultBlockParameterName.LATEST).sendAsync().get();
+			BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+			log.info("nonce->\t" + nonce);
+			//创建合约交易 data
+			String methodName ="transfer";
+			@SuppressWarnings("rawtypes")
+			List<Type> inputParameters = new ArrayList<>();
+			List<TypeReference<?>> outputParameters = new ArrayList<>();
+			// Address
+			Address toAddr = new Address(transaction.getToAddr());
+			// amount 
+			Uint256 amount  = new Uint256(new BigInteger(transaction.getValue()));
+			// 方法参数
+			inputParameters.add(toAddr);
+			inputParameters.add(amount);
+			// 方法返回值
+			TypeReference<Bool> typeReference = new TypeReference<Bool>() {};
+			outputParameters.add(typeReference);
+			// 方法组装
+			Function function = new Function(methodName, inputParameters, outputParameters);
+			// 编码
+			String data = FunctionEncoder.encode(function);
+			// 创建 RawTransaction 对象，这个创建方法是用来交易token  
+			// to 应该是 Contract address
+			RawTransaction rawTransaction = 
+					RawTransaction.createTransaction(nonce, DefaultGasProvider.GAS_PRICE, DefaultGasProvider.GAS_LIMIT, transaction.getContractAddr(), data);
+			// 编码 RawTransaction 对象 ,签名
+			byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+			String hexValue = Numeric.toHexString(signedMessage);
+			// 发送
+			EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
+			if(ethSendTransaction.hasError())
+				throw new WalletException("send_transaction_failed",ethSendTransaction.getError().getMessage());
+			// 获取 交易hash ,这个交易最好保存，方便后期查询 状态
+			String txHash = ethSendTransaction.getTransactionHash();
+			// 这里之更新下 txHash ，获取交易结果
+			EthGetTransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(txHash).send();
+			transaction.setTxHash(txHash);
+			if(!transactionReceipt.hasError()) {
+				transaction.setStatus(new BigInteger(transactionReceipt.getResult().getStatus().substring(2),16).toString(10));
+				transaction.setGasLimit(DefaultGasProvider.GAS_LIMIT+"");
+				transaction.setGasPrice(DefaultGasProvider.GAS_PRICE+"");
+				transaction.setGasUsed(transactionReceipt.getResult().getGasUsed()+"");
+				transaction.setCumulativeGasUsed(transactionReceipt.getResult().getCumulativeGasUsed()+"");
+			}
+			return transaction;
+		}  catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("send_transaction_failed","keystore json 格式错误");
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("send_transaction_failed","keystore json 转换失败");
+		} catch (CipherException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("send_transaction_failed","keystore 解码失败");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("send_transaction_failed","网络异常");
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("send_transaction_failed","Interrupted:\t"+e.getMessage());
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("send_transaction_failed","ExecutionException:\t"+e.getMessage());
+		} 
+	}
+
+
 
 	@Override
 	public Transaction getTransactionReceipt(Transaction transaction) {
@@ -129,6 +232,4 @@ public class EthServiceImpl implements EthService,InitializingBean {
 		}
 		
 	}
-
-
 }

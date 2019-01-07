@@ -19,6 +19,10 @@ public class EthTransferWorker {
 	@StreamListener(WorkerMessage.TRANSFER_JOB_INPUT)
 	@SendTo(WorkerMessage.TRANSFER_JOB_CALLBACK_OUTPUT)
 	public Transaction doWork(Transaction msg,@Header(name="p1")String pwd) {
-		return this.ethService.sendTransaction(msg,pwd);
+		//区分 ether 还是 token 交易
+		if(msg.getContractAddr() == null)
+			return this.ethService.sendTransaction(msg,pwd);
+		else
+			return this.ethService.sendTokenTransaction(msg, pwd);
 	}
 }

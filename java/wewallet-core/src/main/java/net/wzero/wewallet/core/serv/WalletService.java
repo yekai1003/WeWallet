@@ -3,6 +3,7 @@ package net.wzero.wewallet.core.serv;
 import java.util.List;
 
 import net.wzero.wewallet.core.domain.Card;
+import net.wzero.wewallet.core.domain.Token;
 
 public interface WalletService {
 
@@ -25,4 +26,13 @@ public interface WalletService {
 	 * @return
 	 */
 	Card refreshBalance(Integer cardId);
+	/**
+	 * 
+	 * @param memberId
+	 * @param cardId
+	 * @param contractAddr
+	 * @param standard
+	 * @return
+	 */
+	Token addToken(Integer memberId,Integer cardId,String contractAddr,String standard);
 }

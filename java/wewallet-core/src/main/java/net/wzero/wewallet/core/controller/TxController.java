@@ -1,6 +1,7 @@
 package net.wzero.wewallet.core.controller;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,34 @@ public class TxController extends BaseController {
 			env = this.getMember().getCurrEnv();
 		if(env == null) throw new WalletException("env_not_set","选择当前钱包环境");
 		return this.txSerrvice.createTransaction(this.getMember().getId(), cardId, toAddress, val,EthEnv.fromString(env), payPwd);
+	}
+	/**
+	 * 
+	 * token 基于一张卡的 token
+	 * token 本身是基于以太坊account的
+	 * @param tokenId token表的id号
+	 * @param payPwd 支付密码 因为合约的交易也需要授权
+	 * @param toAddress 给谁
+	 * @param value 额度，这里是没有单位的
+	 * @param env 环境可选
+	 * @return
+	 */
+	public Transaction erc20TokenTransfer(
+			@RequestParam(name = "tokenId") Integer tokenId,
+			@RequestParam(name = "payPwd") String payPwd,
+			@RequestParam(name = "toAddress") String toAddress,
+			@RequestParam(name = "value") String value,
+			@RequestParam(name = "env",required=false) String env
+			) {
+		// 额度计算
+		BigInteger val = new BigInteger(value);
+		if(val.compareTo(new BigInteger("0"))<=0)
+			throw new WalletException("value_error","转账金额必须大于0");
+		//决定环境
+		if(env == null)
+			env = this.getMember().getCurrEnv();
+		if(env == null) throw new WalletException("env_not_set","选择当前钱包环境");
+		return this.txSerrvice.createTokenTransaction(this.getMember().getId(), tokenId, toAddress, val, EthEnv.fromString(env), payPwd);
 	}
 	@RequestMapping("/get")
 	public Transaction get(@RequestParam(name = "id") Integer id) {
