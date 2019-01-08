@@ -109,5 +109,5 @@ public final class AppConstants {
 		}
 		
 	}
-	
+	public static final String ETH_ENV_KEY = "eth_env";
 }

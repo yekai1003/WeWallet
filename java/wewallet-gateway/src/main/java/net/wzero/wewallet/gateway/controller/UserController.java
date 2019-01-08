@@ -1,5 +1,6 @@
 package net.wzero.wewallet.gateway.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
 import net.wzero.wewallet.domain.MemberInfo;
+import net.wzero.wewallet.domain.SessionData;
 import net.wzero.wewallet.gateway.domain.Client;
 import net.wzero.wewallet.gateway.domain.Member;
 import net.wzero.wewallet.gateway.domain.MemberAccount;
@@ -28,7 +30,10 @@ import net.wzero.wewallet.gateway.repo.UserGroupRepository;
 import net.wzero.wewallet.gateway.repo.UserResourceRepository;
 import net.wzero.wewallet.gateway.serv.MemberSessionService;
 import net.wzero.wewallet.gateway.serv.WechatService;
+import net.wzero.wewallet.res.OkResponse;
+import net.wzero.wewallet.serv.SessionService;
 import net.wzero.wewallet.utils.AppConstants;
+import net.wzero.wewallet.utils.AppConstants.EthEnv;
 import net.wzero.wewallet.utils.JsonUtils;
 import net.wzero.wewallet.utils.ValidateUtils;
 
@@ -118,7 +123,28 @@ public class UserController extends BaseController {
 		if(member == null) throw new WalletException("member_not_found","账户不存在");
 		return member;
 	}
+	@Autowired
+	private SessionService sessionService;
 	
+	/**
+	 * 保存到 member mData里，下次启动加载配置到session
+	 * @return
+	 */
+	@RequestMapping("/setCurrEnv")
+	public OkResponse setCurrEnv(@RequestParam(name="env") String envName) {
+		EthEnv env = EthEnv.valueOf(envName);
+		SessionData sd = this.getSessionData();
+		sd.getMember().setCurrEnv(env.getName());
+		this.sessionService.save(sd);
+		// 保存到缓存
+		Member member = this.memberRepository.findOne(this.getMember().getId());
+		if(member.getmData() == null)
+			member.setmData(new HashMap<>());
+		member.getmData().put(AppConstants.ETH_ENV_KEY, env.getName());
+		// 保存 到用户session 
+		this.memberRepository.save(member);
+		return new OkResponse();
+	}
 	
 	/**
 	 * 修改指定member的信息（修改后没有对该member的token进行）

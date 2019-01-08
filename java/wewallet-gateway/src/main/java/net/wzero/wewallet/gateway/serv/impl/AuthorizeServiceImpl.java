@@ -73,13 +73,17 @@ public class AuthorizeServiceImpl extends SysParamSupport implements AuthorizeSe
 		mi.setEmail(member.getEmail());
 		mi.setApis(member.getUserResource().getApis());
 		mi.setClients(member.getUserResource().getClients());
-//		if(member.getDefaultCustomer() != null)
-//			mi.setDefaultCustomerId(member.getDefaultCustomer().getId());
 		mi.setLastLoginIp(member.getLastLoginIp());
 		mi.setLastLoginTime(member.getLastLoginTime());
 		mi.setMark(member.getMark());
 		mi.setmData(member.getmData());
 		mi.setGroupId(member.getGroup().getId());
+		// 如果存在 eth env
+		if(member.getmData() != null) {
+			if(member.getmData().containsKey(AppConstants.ETH_ENV_KEY)) {
+				mi.setCurrEnv(member.getmData().get(AppConstants.ETH_ENV_KEY));
+			}
+		}
 		return mi;
 	} 
 	private MemberInfo createMemberInfoByWeixin(MemberWechat mw) {

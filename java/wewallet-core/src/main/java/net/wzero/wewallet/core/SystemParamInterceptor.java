@@ -36,8 +36,9 @@ public class SystemParamInterceptor  extends HandlerInterceptorAdapter  {
 		else
 			sp.setClientId(0);
 		sp.setToken(token);
-//		sp.setUserIp(request.getRemoteAddr());
 		sp.setUserIp(request.getHeader("x-real-ip"));
+		if(sp.getUserIp()==null)
+			sp.setUserIp(request.getRemoteAddr());
 		this.sysParamService.set(sp);
 		return true;
 	}
