@@ -103,7 +103,8 @@ public class WalletController extends BaseController {
 	 */
 	@RequestMapping("/refresh")
 	public Card refresh(@RequestParam(name = "id") Integer id) {
-		throw new WalletException("not_implemented"," 未实现");
+//		throw new WalletException("not_implemented"," 未实现");
+		return this.walletService.refreshBalance(this.getMember().getId(), id);
 	}
 	@RequestMapping("/setEnv")
 	public OkResponse setEnv(@RequestParam(name = "env") String envStr) {

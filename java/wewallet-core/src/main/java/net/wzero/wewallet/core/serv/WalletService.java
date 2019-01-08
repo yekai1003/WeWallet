@@ -21,13 +21,13 @@ public interface WalletService {
 	 */
 	Card createCard(Integer memberId,List<String> words,String pwd);
 	/**
-	 * 
+	 * 刷新账户以太坊余额
 	 * @param cardId
 	 * @return
 	 */
-	Card refreshBalance(Integer cardId);
+	Card refreshBalance(Integer memberId,Integer cardId);
 	/**
-	 * 
+	 * 加载一个token 到卡号
 	 * @param memberId
 	 * @param cardId
 	 * @param contractAddr
@@ -35,4 +35,11 @@ public interface WalletService {
 	 * @return
 	 */
 	Token addToken(Integer memberId,Integer cardId,String contractAddr,String standard);
+	/**
+	 * 刷新token的余额
+	 * @param memberId
+	 * @param tokenId
+	 * @return
+	 */
+	Token refreshTokenBalance(Integer memberId,Integer tokenId);
 }

@@ -3,6 +3,7 @@ package net.wzero.wewallet.core.serv.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
 import com.quincysx.crypto.ECKeyPair;
@@ -15,6 +16,7 @@ import com.quincysx.crypto.ethereum.EthECKeyPair;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
+import net.wzero.wewallet.controller.SysParamSupport;
 import net.wzero.wewallet.core.domain.Card;
 import net.wzero.wewallet.core.domain.CardType;
 import net.wzero.wewallet.core.domain.EthereumCard;
@@ -24,11 +26,13 @@ import net.wzero.wewallet.core.repo.CardTypeRepository;
 import net.wzero.wewallet.core.repo.TokenRepository;
 import net.wzero.wewallet.core.serv.CryptoService;
 import net.wzero.wewallet.core.serv.WalletService;
+import net.wzero.wewallet.core.stream.CoreMessage;
 import net.wzero.wewallet.utils.AppConstants;
+import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
 @Slf4j
 @Service("walletService")
-public class EthereumWalletServiceImpl implements WalletService {
+public class EthereumWalletServiceImpl extends SysParamSupport implements WalletService {
 
 	@Autowired
 	private CryptoService cryptoService;
@@ -38,6 +42,8 @@ public class EthereumWalletServiceImpl implements WalletService {
 	private CardTypeRepository cardTypeRepository;
 	@Autowired
 	private TokenRepository tokenRepository;
+	@Autowired
+	private CoreMessage coreMessage;
 
 	/**
 	 * 默认遵循 BIP44
@@ -115,9 +121,22 @@ public class EthereumWalletServiceImpl implements WalletService {
 	}
 
 	@Override
-	public Card refreshBalance(Integer cardId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Card refreshBalance(Integer memberId,Integer cardId) {
+		// 判断环境是否已经配置
+		if(this.getMember().getCurrEnv() == null) throw new WalletException("env_not_set","请先设置当前环境");
+		EthEnv env = EthEnv.fromString(this.getMember().getCurrEnv());
+		
+		//获取卡号
+		Card card = this.cardRepository.findOne(cardId);
+		if(card == null) throw new WalletException("card_not_exist","卡片不存在");
+		if(!memberId.equals(card.getMemberId())) throw new WalletException("op_failed","只能操作本账户下的卡片");
+		card.setIsRefreshing(true);
+		card = this.cardRepository.save(card);
+		// 发送更新请求消息 
+		this.coreMessage.refreshJob().send(MessageBuilder.withPayload(card)
+				.setHeader("jobType", AppConstants.JOB_TYPE_REFRESH_CARD)
+				.setHeader("env", env.getName()).build());
+		return card;
 	}
 
 	@Override
@@ -127,7 +146,7 @@ public class EthereumWalletServiceImpl implements WalletService {
 		if(card == null) throw new WalletException("card_not_exist","指定的CardID不存在");
 		if(card.getMemberId() != memberId) throw new WalletException("session_error","本账户不包含此卡片");
 		// 看下token是否存在
-		Token token = this.tokenRepository.findByCardIdAndContractAddress(cardId, contractAddr);
+		Token token = this.tokenRepository.findByCardIdAndContractAddr(cardId, contractAddr);
 		if(token != null) throw new WalletException("token_exist","此token已经存在，请勿重复添加");
 		token = new Token();
 		token.setCard(card);
@@ -135,5 +154,25 @@ public class EthereumWalletServiceImpl implements WalletService {
 		token.setStandard(standard);
 		token.setBalance("0");
 		return this.tokenRepository.save(token);
+	}
+
+	@Override
+	public Token refreshTokenBalance(Integer memberId, Integer tokenId) {
+		// 判断环境是否已经配置
+		if(this.getMember().getCurrEnv() == null) throw new WalletException("env_not_set","请先设置当前环境");
+		EthEnv env = EthEnv.fromString(this.getMember().getCurrEnv());
+		
+		// 获取token信息
+		Token token = this.tokenRepository.findOne(tokenId);
+		if(token == null) throw new WalletException("token_not_exist","指定的id不存在");
+		
+		if(!token.getCard().getMemberId().equals(memberId)) throw new WalletException("op_failed","只能操作本账户下的token");
+		token.setIsRefreshing(true);
+		token = this.tokenRepository.save(token);
+		// 发送一个消息 到rabbitmq
+		this.coreMessage.refreshJob().send(MessageBuilder.withPayload(token)
+				.setHeader("jobType", AppConstants.JOB_TYPE_REFRESH_TOKEN)
+				.setHeader("env", env.getName()).build());
+		return token;
 	}
 }

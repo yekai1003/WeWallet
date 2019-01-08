@@ -29,4 +29,14 @@ public class TokenController extends BaseController {
 			@RequestParam(name="standard",required=false,defaultValue="erc20")String standard) {
 		return this.walletService.addToken(this.getMember().getId(), cardId, contractAddr, standard);
 	}
+	/**
+	 * 和 card 一样实现异步刷新
+	 * 和交易一样使用同一个消息通道
+	 * 不同的是 这里的消息不是同一个类的实例
+	 * @return
+	 */
+	@RequestMapping("/refresh")
+	public Token refresh(@RequestParam(name="tokenId")Integer tokenId) {
+		return this.walletService.refreshTokenBalance(this.getMember().getId(), tokenId);
+	}
 }

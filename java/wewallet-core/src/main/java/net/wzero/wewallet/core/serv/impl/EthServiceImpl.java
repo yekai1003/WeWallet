@@ -13,6 +13,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Bool;
@@ -26,6 +27,8 @@ import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthCall;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
@@ -42,7 +45,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
+import net.wzero.wewallet.core.domain.Card;
 import net.wzero.wewallet.core.domain.EthereumCard;
+import net.wzero.wewallet.core.domain.Token;
 import net.wzero.wewallet.core.domain.Transaction;
 import net.wzero.wewallet.core.repo.CardRepository;
 import net.wzero.wewallet.core.serv.EthService;
@@ -226,10 +231,68 @@ public class EthServiceImpl implements EthService,InitializingBean {
 			transaction.setCumulativeGasUsed(transactionReceipt.getResult().getCumulativeGasUsed()+"");
 			return transaction;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new WalletException("get_transaction_failed","应该是网络异常!");
 		}
 		
+	}
+
+	/**
+	 * 和交易不同，这里刷新余额 的环境应该是 session里当前的环境
+	 * 但是这里不是web 请求，而是消息订阅服务，因此没有session可以获取...
+	 * 带参数过来吧!
+	 */
+	@Override
+	public Card refreshEthBalance(EthereumCard card,String env) {
+		Web3j web3 = ethEnvMap.get(env);
+		try {
+			EthGetBalance balance = web3.ethGetBalance(card.getAddr(), DefaultBlockParameterName.LATEST).send();
+			card.setBalance(balance.getBalance().toString(10));
+			card.setIsRefreshing(false);
+			return card;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("io_exception",e.getMessage());
+		}
+	}
+
+	@Override
+	public Token refreshTokenBalance(Token token,String env) {
+		Web3j web3j = ethEnvMap.get(env);
+		String methodName = "balanceOf";
+		@SuppressWarnings("rawtypes")
+		List<Type> inputParameters = new ArrayList<>();
+		List<TypeReference<?>> outputParameters = new ArrayList<>();
+		// 输入参数
+		Address address = new Address(token.getCard().getAddr());
+		inputParameters.add(address);
+		// 返回参数
+		TypeReference<Uint256> typeReference = new TypeReference<Uint256>() {};
+		outputParameters.add(typeReference);
+		Function function = new Function(methodName,inputParameters,outputParameters);
+		String data = FunctionEncoder.encode(function);
+		org.web3j.protocol.core.methods.request.Transaction transaction 
+				= org.web3j.protocol.core.methods.request.Transaction.createEthCallTransaction(
+						token.getCard().getAddr(), 
+						token.getContractAddr(),
+						data);
+		
+		try {
+			EthCall ethCall = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).sendAsync().get();
+			@SuppressWarnings("rawtypes")
+			List<Type> results = FunctionReturnDecoder.decode(ethCall.getValue(), function.getOutputParameters());
+			token.setBalance(results.get(0).getValue().toString());
+			token.setIsRefreshing(false);
+			return token;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("op_failed",e.getMessage());
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("op_failed",e.getMessage());
+		}
 	}
 }

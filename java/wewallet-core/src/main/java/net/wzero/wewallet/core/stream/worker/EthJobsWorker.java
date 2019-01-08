@@ -2,12 +2,17 @@ package net.wzero.wewallet.core.stream.worker;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 
+import net.wzero.wewallet.WalletException;
+import net.wzero.wewallet.core.domain.EthereumCard;
+import net.wzero.wewallet.core.domain.Token;
 import net.wzero.wewallet.core.domain.Transaction;
 import net.wzero.wewallet.core.serv.EthService;
 import net.wzero.wewallet.core.stream.WorkerMessage;
+import net.wzero.wewallet.utils.AppConstants;
 
 @Component
 public class EthJobsWorker {
@@ -19,5 +24,15 @@ public class EthJobsWorker {
 	@SendTo(WorkerMessage.GET_TRANSACTION_RECEIPT_CALLBACK_OUTPUT)
 	public Transaction refreshTransaction(Transaction transaction) {
 		return this.ethService.getTransactionReceipt(transaction);
+	}
+	@StreamListener(value=WorkerMessage.REFRESH_JOB_INPUT)
+	@SendTo(value=WorkerMessage.REFRESH_JOB_CALLBACK_OUTPUT)
+	public Object refreshJob(Object param,@Header(name="jobType")int jobType,@Header(name="env")String env) {
+		if(jobType == AppConstants.JOB_TYPE_REFRESH_CARD)
+			return this.ethService.refreshEthBalance((EthereumCard)param,env);
+		else if(jobType == AppConstants.JOB_TYPE_REFRESH_TOKEN)
+			return this.ethService.refreshTokenBalance((Token)param,env);
+		else
+			throw new WalletException("job_type_undefine","工作类型未定义");
 	}
 }

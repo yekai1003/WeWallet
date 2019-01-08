@@ -34,6 +34,9 @@ public class Token extends EntityBase{
 
 	private String balance;
 
+	@Column(columnDefinition="tinyint(1) default 0")
+	private Boolean isRefreshing;
+	
 	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
 	private Date created;
 	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", updatable = false)
@@ -79,6 +82,12 @@ public class Token extends EntityBase{
 	}
 	public void setUpdated(Date updated) {
 		this.updated = updated;
+	}
+	public Boolean getIsRefreshing() {
+		return isRefreshing;
+	}
+	public void setIsRefreshing(Boolean isRefreshing) {
+		this.isRefreshing = isRefreshing;
 	}
 	
 }

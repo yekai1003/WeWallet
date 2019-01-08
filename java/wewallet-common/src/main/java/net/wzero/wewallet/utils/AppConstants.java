@@ -25,6 +25,10 @@ public final class AppConstants {
 	public static final int LOGIN_TYPE_WEIXIN = 10;//微信登陆
 	public static final int LOGIN_TYPE_ALIPAY = 11;//支付宝？
 	
+	//------------------ job type -----------------------------
+	public static final int JOB_TYPE_REFRESH_CARD = 1;// 卡片刷新
+	public static final int JOB_TYPE_REFRESH_TOKEN = 2;// token刷新
+	
 	//-------------------Infura.io 的钱包节点 WeWallet 项目--------------------
 	public static final String WEWALLET_PROJECT_ID = "3cef33da8db74456945739de85d48457";
 	public static final String WEWALLET_PROJECT_SECRET = "b928943494b242148ec23669d4c7e4c8";

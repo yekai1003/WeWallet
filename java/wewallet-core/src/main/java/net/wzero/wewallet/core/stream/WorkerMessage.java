@@ -18,6 +18,9 @@ public interface WorkerMessage {
 	// Receipt
 	String GET_TRANSACTION_RECEIPT_INPUT  = "getTransactionReceiptInput";
 	String GET_TRANSACTION_RECEIPT_CALLBACK_OUTPUT = "getTransactionReceiptCallbackOutput";
+	// Refresh
+	String REFRESH_JOB_INPUT = "refreshJobInput";
+	String REFRESH_JOB_CALLBACK_OUTPUT = "refreshJobCallbackOutput";
 	// sms
 	String SMS_JOB_INPUT = "smsJobInput";
 
@@ -33,6 +36,12 @@ public interface WorkerMessage {
 	@Output(WorkerMessage.GET_TRANSACTION_RECEIPT_CALLBACK_OUTPUT)
 	MessageChannel getTransactionByHashCallback();
 
+	@Input(WorkerMessage.REFRESH_JOB_INPUT)
+	SubscribableChannel refreshJob();
+	
+	@Output(WorkerMessage.REFRESH_JOB_CALLBACK_OUTPUT)
+	MessageChannel refreshJobCallback();
+	
 	@Input(WorkerMessage.SMS_JOB_INPUT)
 	SubscribableChannel smsJob();
 }
