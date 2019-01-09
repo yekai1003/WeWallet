@@ -3,7 +3,6 @@ package net.wzero.wewallet.gateway.controller;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,17 +17,10 @@ import net.wzero.wewallet.domain.MemberInfo;
 import net.wzero.wewallet.domain.SessionData;
 import net.wzero.wewallet.gateway.domain.Client;
 import net.wzero.wewallet.gateway.domain.Member;
-import net.wzero.wewallet.gateway.domain.MemberAccount;
-import net.wzero.wewallet.gateway.domain.MemberPhone;
 import net.wzero.wewallet.gateway.domain.MemberWechat;
-import net.wzero.wewallet.gateway.domain.UserGroup;
-import net.wzero.wewallet.gateway.domain.UserResource;
-import net.wzero.wewallet.gateway.repo.MemberAccountRepository;
-import net.wzero.wewallet.gateway.repo.MemberPhoneRepository;
-import net.wzero.wewallet.gateway.repo.MemberRepository;
-import net.wzero.wewallet.gateway.repo.UserGroupRepository;
-import net.wzero.wewallet.gateway.repo.UserResourceRepository;
 import net.wzero.wewallet.gateway.serv.MemberSessionService;
+import net.wzero.wewallet.gateway.serv.UserGroupService;
+import net.wzero.wewallet.gateway.serv.UserService;
 import net.wzero.wewallet.gateway.serv.WechatService;
 import net.wzero.wewallet.res.OkResponse;
 import net.wzero.wewallet.serv.SessionService;
@@ -43,15 +35,9 @@ import net.wzero.wewallet.utils.ValidateUtils;
 public class UserController extends BaseController {
 
 	@Autowired
-	private MemberPhoneRepository memberPhoneRepository;
+	private UserGroupService userGroupService;
 	@Autowired
-	private MemberRepository memberRepository;
-	@Autowired
-	private UserResourceRepository userResourceRepository;
-	@Autowired
-	private MemberAccountRepository memberAccountRepository;
-	@Autowired
-	private UserGroupRepository userGroupRepository;
+	private UserService userService;
 	@Autowired
 	private WechatService wechatService;
 	@Autowired
@@ -69,14 +55,10 @@ public class UserController extends BaseController {
 			@RequestParam(name="loginPwd")String loginPwd) {
 		if(loginName.trim().length() < 6)
 			throw new WalletException("login_name_length_exception","登录名长度至少为6位");
-		MemberAccount tmpMa = this.memberAccountRepository.findByLoginName(loginName); // 检查 loginname存在否
-		if(tmpMa != null) throw new WalletException("login_name_exist","登录名存在");
-		
-		Member member = addMember(loginName.trim(), loginName.trim(), loginPwd, AppConstants.NORMAL_USER_GROUP_ID, null);
+		Member member = this.userService.addMemberAndMemberAccount(loginName.trim(), loginName.trim(), loginPwd, this.userGroupService.getNormalUserGroup(), null);
 		if(ValidateUtils.validateEmail(loginName.trim())) { // 如果登录名是邮箱，保存邮箱
-			member.setEmail(loginName.trim());
-			this.memberRepository.save(member);
-		} 
+			this.userService.updateMember(member, null, null, null, loginName.trim(), null, null, null);
+		}
 		return new OkResponse();
 	}
 	
@@ -89,7 +71,6 @@ public class UserController extends BaseController {
 	 * @param phone
 	 * @return
 	 */
-	@Transactional
 	@RequestMapping("/addMember")
 	public Member addMember(
 			@RequestParam(name="userName")String userName,
@@ -97,42 +78,12 @@ public class UserController extends BaseController {
 			@RequestParam(name="loginPwd")String loginPwd,
 			@RequestParam(name="groupId") Integer groupId,
 			@RequestParam(name="phone",required=false)String phone) {
-		MemberAccount tmpMa = this.memberAccountRepository.findByLoginName(loginName); // 检查 loginname存在否
-		if(tmpMa != null) throw new WalletException("login_name_exist","登录名存在");
-		UserGroup ug = this.userGroupRepository.findOne(groupId);
-		if(ug == null) throw new WalletException("user_group_not_exist","用户组不存在");
 		if(userName.trim().length() < 1) throw new WalletException("param_error","username不能为空");
-		
-		Member m = new Member();
-		m.setGroup(ug);
-		UserResource userResource = new UserResource(); // 设置用户资源
-		userResource.setApis(ug.getApis());
-		userResource.setClients(ug.getClients());
-		userResource.setMember(m);
-		this.userResourceRepository.save(userResource);
-		m.setUserResource(userResource);
-		m.setEnable(true);
-		m.setNickname(userName);
 		if(phone != null) {
 			ValidateUtils.validatePhone(phone);
-			if(this.memberRepository.findByPhone(phone) != null) throw new WalletException("phone_exist_member","该手机号已存在与其它账户中");
-			m.setPhone(phone);
-			
-			MemberPhone memberPhone = this.memberPhoneRepository.findByNumber(phone);
-			if(memberPhone != null) throw new WalletException("phone_exist_member_phone","该手机号已存在与member_phone中");
-			memberPhone = new MemberPhone();
-			memberPhone.setMember(m);
-			memberPhone.setNumber(phone);
-			this.memberPhoneRepository.save(memberPhone);
+			if(this.userService.findByPhone(phone) != null) throw new WalletException("phone_exist_member","该手机号已存在与其它账户中");
 		}
-		m = this.memberRepository.save(m);
-		
-		MemberAccount ma = new MemberAccount();
-		ma.setMember(m);
-		ma.setLoginName(loginName);
-		ma.setLoginPwd(DigestUtils.md5Hex(loginPwd).toUpperCase());
-		this.memberAccountRepository.save(ma);
-		return m;
+		return this.userService.addMemberAndMemberAccount(userName.trim(), loginName.trim(), loginPwd, this.userGroupService.findByGroupId(groupId), phone);
 	}
 	
 	/**
@@ -142,7 +93,7 @@ public class UserController extends BaseController {
 	 */
 	@RequestMapping("/getMember")
 	public Member getMember(@RequestParam(name="mid") int mid) {
-		Member member = this.memberRepository.findOne(mid);
+		Member member = this.userService.findByMemberId(mid);
 		if(member == null) throw new WalletException("member_not_found","账户不存在");
 		return member;
 	}
@@ -160,12 +111,11 @@ public class UserController extends BaseController {
 		sd.getMember().setCurrEnv(env.getName());
 		this.sessionService.save(sd);
 		// 保存到缓存
-		Member member = this.memberRepository.findOne(this.getMember().getId());
+		Member member = this.userService.findByMemberId(this.getMember().getId());
 		if(member.getmData() == null)
 			member.setmData(new HashMap<>());
 		member.getmData().put(AppConstants.ETH_ENV_KEY, env.getName());
-		// 保存 到用户session 
-		this.memberRepository.save(member);
+		this.userService.updateMember(member);
 		return new OkResponse();
 	}
 	
@@ -190,51 +140,9 @@ public class UserController extends BaseController {
 			@RequestParam(name="groupId",required=false) Integer groupId,
 			@RequestParam(name="phone",required=false)String phone,
 			@RequestParam(name="email",required=false)String email) {
-		Member m = this.memberRepository.findOne(memberId);
+		Member m = this.userService.findByMemberId(memberId);
 		if(m==null) throw new WalletException("member_not_exist","指定的成员不存在");
-		if(groupId != null && !groupId.equals(m.getGroup().getId())) {
-			UserGroup ug = this.userGroupRepository.findOne(groupId);
-			if(ug == null) throw new WalletException("user_group_not_exist","用户组不存在");
-			m.setGroup(ug);
-			
-			UserResource userResource = m.getUserResource();
-			if(userResource == null) {
-				userResource = new UserResource();
-				userResource.setMember(m);
-			}
-			userResource.setApis(ug.getApis());
-			userResource.setClients(ug.getClients());
-			userResourceRepository.save(userResource);
-			m.setUserResource(userResource);
-		}
-		if(userName != null) m.setNickname(userName);
-		if(phone != null && !phone.equals(m.getPhone())) {
-			ValidateUtils.validatePhone(phone);
-			m.setPhone(phone);
-			
-			m = this.memberRepository.findByPhone(phone);
-			if(m != null) throw new WalletException("phone_exist_member","该手机号已存在与其它账户中");
-			MemberPhone memberPhone = this.memberPhoneRepository.findByMemberId(memberId);
-			if(memberPhone == null) {
-				memberPhone = new MemberPhone();
-				memberPhone.setMember(m);
-			}
-			memberPhone.setNumber(phone);
-			this.memberPhoneRepository.save(memberPhone);
-		}
-		if(email != null) m.setEmail(email);
-		this.memberRepository.save(m);
-		if(loginName != null) {
-			MemberAccount tmpMa = this.memberAccountRepository.findByLoginName(loginName);
-			if(tmpMa != null) throw new WalletException("login_name_exist","登录名存在或不能与当前登录名相同");
-			MemberAccount ma = this.memberAccountRepository.findByMemberId(m.getId());
-			ma.setLoginName(loginName);
-			if(loginPwd != null) {
-				ma.setLoginPwd(DigestUtils.md5Hex(loginPwd).toUpperCase());
-			}
-			this.memberAccountRepository.save(ma);
-		}
-		return m;
+		return this.userService.updateMember(m, userName, groupId, phone, email, null, loginName, loginPwd);
 	}
 	
 	/**
@@ -247,7 +155,7 @@ public class UserController extends BaseController {
 	public Object getMembers(@RequestParam(name="keywords") String keywords,
 			@RequestParam(name="pageNo",required=false,defaultValue="0") Integer pageNo) {
 		Pageable pageable = new PageRequest(pageNo,20);
-		return this.memberRepository.findByNicknameLikeOrPhoneLike("%"+keywords+"%", "%"+keywords+"%", pageable);
+		return this.userService.findByNicknameLikeOrPhoneLike("%"+keywords+"%", "%"+keywords+"%", pageable);
 	}
 	
 	/**
@@ -271,11 +179,9 @@ public class UserController extends BaseController {
 	public Member enableMember(
 			@RequestParam(name="memberId")Integer memberId,
 			@RequestParam(name="enable") Boolean enable) {
-		Member m = this.memberRepository.findOne(memberId);
+		Member m = this.userService.findByMemberId(memberId);
 		if(m == null) throw new WalletException("member_not_exist","指定的成员不存在");
-		m.setEnable(enable);
-		m = this.memberRepository.save(m);
-		
+		m = this.userService.updateMember(m, null, null, null, null, enable, null, null);
 		if(!enable)
 			this.memberSessionService.deleteMemberSession(memberId);
 		return m;
@@ -288,7 +194,6 @@ public class UserController extends BaseController {
 	 * @param rawData
 	 * @return
 	 */
-	
 	@RequestMapping("/updateMemberWeixin")
 	public MemberWechat updateMemberWeixin(
 			@RequestParam(name="encryptedData") String encryptedData,
@@ -316,8 +221,7 @@ public class UserController extends BaseController {
 	public Object getMemberWeixin(
 			@RequestParam(name="mid") Integer mid,
 			@RequestParam(name="cid") Integer cid) {
-		MemberWechat memberWx = this.wechatService.getUserByMemberIdAndClientId(mid, cid);
-		return memberWx;
+		return this.wechatService.getUserByMemberIdAndClientId(mid, cid);
 	}
 	
 	/**
@@ -325,7 +229,6 @@ public class UserController extends BaseController {
 	 * @param mid
 	 * @return
 	 */
-	
 	@RequestMapping("/getMemberWeixins")
 	public List<MemberWechat> getMemberWeixins(@RequestParam(name="mid") Integer mid) {
 		List<MemberWechat> memberWeixins = this.wechatService.getUserByMemberId(mid);
