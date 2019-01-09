@@ -110,4 +110,6 @@ public final class AppConstants {
 		
 	}
 	public static final String ETH_ENV_KEY = "eth_env";
+	
+	public static final int NORMAL_USER_GROUP_ID = 2;
 }
