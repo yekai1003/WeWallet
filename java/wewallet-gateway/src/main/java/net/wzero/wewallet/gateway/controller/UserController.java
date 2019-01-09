@@ -58,6 +58,29 @@ public class UserController extends BaseController {
 	private MemberSessionService memberSessionService;
 	
 	/**
+	 * 用户创建member、member_account
+	 * @param loginName
+	 * @param loginPwd
+	 * @return
+	 */
+	@RequestMapping("/join")
+	public OkResponse join(
+			@RequestParam(name="loginName")String loginName,
+			@RequestParam(name="loginPwd")String loginPwd) {
+		if(loginName.trim().length() < 6)
+			throw new WalletException("login_name_length_exception","登录名长度至少为6位");
+		MemberAccount tmpMa = this.memberAccountRepository.findByLoginName(loginName); // 检查 loginname存在否
+		if(tmpMa != null) throw new WalletException("login_name_exist","登录名存在");
+		
+		Member member = addMember(loginName.trim(), loginName.trim(), loginPwd, AppConstants.NORMAL_USER_GROUP_ID, null);
+		if(ValidateUtils.validateEmail(loginName.trim())) { // 如果登录名是邮箱，保存邮箱
+			member.setEmail(loginName.trim());
+			this.memberRepository.save(member);
+		} 
+		return new OkResponse();
+	}
+	
+	/**
 	 * 管理员创建member、member_account
 	 * @param userName
 	 * @param loginName
