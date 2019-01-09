@@ -31,7 +31,7 @@ public class EthJobsWorker {
 		if(jobType == AppConstants.JOB_TYPE_REFRESH_CARD)
 			return this.ethService.refreshEthBalance((EthereumCard)param,env);
 		else if(jobType == AppConstants.JOB_TYPE_REFRESH_TOKEN)
-			return this.ethService.refreshTokenBalance((Token)param,env);
+			return this.ethService.refreshTokenBalance((Token)param);
 		else
 			throw new WalletException("job_type_undefine","工作类型未定义");
 	}

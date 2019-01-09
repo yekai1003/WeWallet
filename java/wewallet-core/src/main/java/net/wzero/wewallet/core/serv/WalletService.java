@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.wzero.wewallet.core.domain.Card;
 import net.wzero.wewallet.core.domain.Token;
+import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
 public interface WalletService {
 
@@ -34,7 +35,7 @@ public interface WalletService {
 	 * @param standard
 	 * @return
 	 */
-	Token addToken(Integer memberId,Integer cardId,String contractAddr,String standard);
+	Token addToken(Integer memberId,Integer cardId,EthEnv env,String contractAddr,String standard);
 	/**
 	 * 刷新token的余额
 	 * @param memberId
