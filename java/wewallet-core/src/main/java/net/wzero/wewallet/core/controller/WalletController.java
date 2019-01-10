@@ -85,10 +85,22 @@ public class WalletController extends BaseController {
 		List<String> words =  Arrays.asList(mnemonic.replaceAll("\r\n", " ").split("[\\s|\n]"));
 		return this.walletService.createAccount(this.getMember().getId(),words, pwd, mark);
 	}
+	
 	@RequestMapping("/get")
 	public Account get(@RequestParam(name = "id") Integer id) {
-		return this.accountRepository.findOne(id);
+		return this.walletService.findByAccountId(id);
 	}
+	
+	@RequestMapping("/updateAccount")
+	public Account updateAccount(
+			@RequestParam(name = "accountId") Integer accountId,
+			@RequestParam(name = "mark", required=false) String mark) {
+		Account account = this.walletService.findByAccountId(accountId);
+		if(account == null)
+			throw new WalletException("param_error", accountId+"号account不存在");
+		return this.walletService.updateAccount(account, mark);
+	}
+	
 	/**
 	 * 列出账户下所有的账户
 	 * @return

@@ -21,6 +21,8 @@ public interface WalletService {
 	 * @return
 	 */
 	Account createAccount(Integer memberId,List<String> words,String pwd, String mark);
+	Account updateAccount(Account account, String mark);
+	Account findByAccountId(Integer accountId);
 	/**
 	 * 刷新账户以太坊余额
 	 * @param accountId
@@ -35,7 +37,9 @@ public interface WalletService {
 	 * @param standard
 	 * @return
 	 */
-	Token addToken(Integer memberId,Integer accountId,EthEnv env,String contractAddr,String standard);
+	Token addToken(Integer memberId,Integer accountId,EthEnv env,String contractAddr,String standard, String icon);
+	Token updateTokn(Token token, String contractAddr,String standard, String icon);
+	Token findByTokenId(Integer tokenId);
 	/**
 	 * 刷新token的余额
 	 * @param memberId

@@ -118,6 +118,18 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 			throw new WalletException("validation_exception","编码错误");
 		}
 	}
+	
+	@Override
+	public Account findByAccountId(Integer accountId) {
+		return this.accountRepository.findOne(accountId);
+	}
+	
+	@Override
+	public Account updateAccount(Account account, String mark) {
+		if(mark != null) account.setMark(mark);
+		return this.accountRepository.save(account);
+	}
+	
 	private EthECKeyPair makeKeyPairByPath(ExtendedKey extendedKey,String path) throws ValidationException {
 		AddressIndex address = this.cryptoService.paseAddress(path);
 		return this.makeKeyPairByPath(extendedKey, address);
@@ -148,7 +160,7 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 	}
 
 	@Override
-	public Token addToken(Integer memberId, Integer accountId,EthEnv env, String contractAddr, String standard) {
+	public Token addToken(Integer memberId, Integer accountId, EthEnv env, String contractAddr, String standard, String icon) {
 		//先获取account
 		Account account = this.accountRepository.findOne(accountId);
 		if(account == null) throw new WalletException("account_not_exist","指定的AccountID不存在");
@@ -161,7 +173,21 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 		token.setEnv(env.getName());
 		token.setContractAddr(contractAddr);
 		token.setStandard(standard);
+		token.setIcon(icon);
 		token.setBalance("0");
+		return this.tokenRepository.save(token);
+	}
+	
+	@Override
+	public Token findByTokenId(Integer tokenId) {
+		return this.tokenRepository.findOne(tokenId);
+	}
+	
+	@Override
+	public Token updateTokn(Token token, String contractAddr, String standard, String icon) {
+		if(contractAddr != null) token.setContractAddr(contractAddr);
+		if(standard != null) token.setStandard(standard);
+		if(icon != null) token.setIcon(icon);
 		return this.tokenRepository.save(token);
 	}
 

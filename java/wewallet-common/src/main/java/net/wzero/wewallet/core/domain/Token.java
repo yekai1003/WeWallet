@@ -37,6 +37,8 @@ public class Token extends EntityBase{
 	private String contractAddr;
 
 	private String balance;
+	
+	private String icon;
 
 	@Column(columnDefinition="tinyint(1) default 0")
 	private Boolean isRefreshing;
@@ -74,6 +76,12 @@ public class Token extends EntityBase{
 	}
 	public void setBalance(String balance) {
 		this.balance = balance;
+	}
+	public String getIcon() {
+		return icon;
+	}
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 	public Date getCreated() {
 		return created;
