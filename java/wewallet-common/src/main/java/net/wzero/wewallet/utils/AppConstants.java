@@ -9,8 +9,8 @@ public final class AppConstants {
 	public static final String URL_CLIENT_ID_KEY="clientid";
 	
 	//---------------虚拟币类型-------------------
-	public final static Integer BITCOIN_CARD_TYPE = 0;
-	public final static Integer ETHEREUM_CARD_TYPE = 60;
+	public final static Integer BITCOIN_ACCOUNT_TYPE = 0;
+	public final static Integer ETHEREUM_ACCOUNT_TYPE = 60;
 	//---------------微信相关---------------------
 	public static final String WX_APP_ID_KEY="wx_app_id";
 	public static final int WX_APP_TYPE_MP = 1;
@@ -26,7 +26,7 @@ public final class AppConstants {
 	public static final int LOGIN_TYPE_ALIPAY = 11;//支付宝？
 	
 	//------------------ job type -----------------------------
-	public static final int JOB_TYPE_REFRESH_CARD = 1;// 卡片刷新
+	public static final int JOB_TYPE_REFRESH_ACCOUNT = 1;// 账户刷新
 	public static final int JOB_TYPE_REFRESH_TOKEN = 2;// token刷新
 	
 	//-------------------Infura.io 的钱包节点 WeWallet 项目--------------------

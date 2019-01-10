@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import net.wzero.wewallet.core.domain.Token;
 
 public interface TokenRepository extends JpaRepository<Token, Integer> {
-	Token findByCardIdAndContractAddrAndEnv(Integer cardId,String contractAddress,String env);
+	Token findByAccountIdAndContractAddrAndEnv(Integer accountId,String contractAddress,String env);
 }

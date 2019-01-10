@@ -32,7 +32,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import net.wzero.wewallet.core.domain.CardType;
+import net.wzero.wewallet.core.domain.AccountType;
 import net.wzero.wewallet.utils.AppConstants;
 import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
@@ -40,9 +40,9 @@ public class TestAction {
 
 	@Test
 	public void doAction1() {
-		CardType ct = CardType.builder().name("一个名字").rootPath("m/44'/60'/0'/0/0").build();
-		// Card c = Card
-		CardType ct2 = CardType.builder().name("一个名字").rootPath("m/44'/60'/0'/0/0").build();
+		AccountType ct = AccountType.builder().name("一个名字").rootPath("m/44'/60'/0'/0/0").build();
+		// Account c = Account
+		AccountType ct2 = AccountType.builder().name("一个名字").rootPath("m/44'/60'/0'/0/0").build();
 		System.out.println(ct2.equals(ct));
 		System.out.println("id->" + ct.getId() + "\t" + ct.getName() + "\t" + ct.getRootPath());
 	}

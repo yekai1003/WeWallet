@@ -45,11 +45,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
-import net.wzero.wewallet.core.domain.Card;
-import net.wzero.wewallet.core.domain.EthereumCard;
+import net.wzero.wewallet.core.domain.Account;
+import net.wzero.wewallet.core.domain.EthereumAccount;
 import net.wzero.wewallet.core.domain.Token;
 import net.wzero.wewallet.core.domain.Transaction;
-import net.wzero.wewallet.core.repo.CardRepository;
+import net.wzero.wewallet.core.repo.AccountRepository;
 import net.wzero.wewallet.core.serv.EthService;
 import net.wzero.wewallet.core.utils.KeystoreUtils;
 import net.wzero.wewallet.utils.AppConstants.EthEnv;
@@ -71,14 +71,14 @@ public class EthServiceImpl implements EthService,InitializingBean {
 		
 	}
 	@Autowired
-	private CardRepository cardRepository;
+	private AccountRepository accountRepository;
 	
 	@Override
 	public Transaction sendTransaction(Transaction transaction, String pwd) {
-		// ether 的发送交易，这里获取 card 对象的方式不对，后期需要通过restTemplate 获取
-		EthereumCard card = (EthereumCard)this.cardRepository.findByMemberIdAndAddr(transaction.getMemberId(), transaction.getFromAddr());
+		// ether 的发送交易，这里获取 account 对象的方式不对，后期需要通过restTemplate 获取
+		EthereumAccount account = (EthereumAccount)this.accountRepository.findByMemberIdAndAddr(transaction.getMemberId(), transaction.getFromAddr());
 		try {
-			ECKeyPair kp = KeystoreUtils.readKeystore(card.getKeystore(), pwd);
+			ECKeyPair kp = KeystoreUtils.readKeystore(account.getKeystore(), pwd);
 			// 获取认证信息
 			Credentials credentials = Credentials.create(kp);
 			Web3j web3j = ethEnvMap.get(transaction.getEnv());
@@ -127,17 +127,17 @@ public class EthServiceImpl implements EthService,InitializingBean {
 	
 	@Override
 	public Transaction sendTokenTransaction(Transaction transaction, String pwd) {
-		// Token 交易的发送,这里获取 card 对象的方式不对，后期需要通过restTemplate 获取
-		EthereumCard card = (EthereumCard)this.cardRepository.findByMemberIdAndAddr(transaction.getMemberId(), transaction.getFromAddr());
+		// Token 交易的发送,这里获取 account 对象的方式不对，后期需要通过restTemplate 获取
+		EthereumAccount account = (EthereumAccount)this.accountRepository.findByMemberIdAndAddr(transaction.getMemberId(), transaction.getFromAddr());
 		try {
-			ECKeyPair kp = KeystoreUtils.readKeystore(card.getKeystore(), pwd);
+			ECKeyPair kp = KeystoreUtils.readKeystore(account.getKeystore(), pwd);
 			// 获取认证信息
 			Credentials credentials = Credentials.create(kp);
 			Web3j web3j = ethEnvMap.get(transaction.getEnv());
 			if(web3j == null) throw new WalletException("env_error","不存在指定环境");
 			// 获取一个发送账户的 有效nonce
 			EthGetTransactionCount ethGetTransactionCount = web3j
-					.ethGetTransactionCount(card.getAddr(), DefaultBlockParameterName.LATEST).sendAsync().get();
+					.ethGetTransactionCount(account.getAddr(), DefaultBlockParameterName.LATEST).sendAsync().get();
 			BigInteger nonce = ethGetTransactionCount.getTransactionCount();
 			log.info("nonce->\t" + nonce);
 			//创建合约交易 data
@@ -214,8 +214,8 @@ public class EthServiceImpl implements EthService,InitializingBean {
 
 	@Override
 	public Transaction getTransactionReceipt(Transaction transaction) {
-		// 这里不需要卡片信息，因为 查询交易不需要签名
-//		EthereumCard card = (EthereumCard)this.cardRepository.findByMemberIdAndAddr(transaction.getMemberId(), transaction.getFromAddr());
+		// 这里不需要账户信息，因为 查询交易不需要签名
+//		EthereumAccount account = (EthereumAccount)this.accountRepository.findByMemberIdAndAddr(transaction.getMemberId(), transaction.getFromAddr());
 		// 通过交易的 环境获取 客户端实例
 		Web3j web3j = ethEnvMap.get(transaction.getEnv());
 
@@ -243,13 +243,13 @@ public class EthServiceImpl implements EthService,InitializingBean {
 	 * 带参数过来吧!
 	 */
 	@Override
-	public Card refreshEthBalance(EthereumCard card,String env) {
+	public Account refreshEthBalance(EthereumAccount account,String env) {
 		Web3j web3 = ethEnvMap.get(env);
 		try {
-			EthGetBalance balance = web3.ethGetBalance(card.getAddr(), DefaultBlockParameterName.LATEST).send();
-			card.setBalance(balance.getBalance().toString(10));
-			card.setIsRefreshing(false);
-			return card;
+			EthGetBalance balance = web3.ethGetBalance(account.getAddr(), DefaultBlockParameterName.LATEST).send();
+			account.setBalance(balance.getBalance().toString(10));
+			account.setIsRefreshing(false);
+			return account;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -265,7 +265,7 @@ public class EthServiceImpl implements EthService,InitializingBean {
 		List<Type> inputParameters = new ArrayList<>();
 		List<TypeReference<?>> outputParameters = new ArrayList<>();
 		// 输入参数
-		Address address = new Address(token.getCard().getAddr());
+		Address address = new Address(token.getAccount().getAddr());
 		inputParameters.add(address);
 		// 返回参数
 		TypeReference<Uint256> typeReference = new TypeReference<Uint256>() {};
@@ -274,7 +274,7 @@ public class EthServiceImpl implements EthService,InitializingBean {
 		String data = FunctionEncoder.encode(function);
 		org.web3j.protocol.core.methods.request.Transaction transaction 
 				= org.web3j.protocol.core.methods.request.Transaction.createEthCallTransaction(
-						token.getCard().getAddr(), 
+						token.getAccount().getAddr(), 
 						token.getContractAddr(),
 						data);
 		

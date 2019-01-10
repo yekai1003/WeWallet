@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
-import net.wzero.wewallet.core.domain.EthereumCard;
+import net.wzero.wewallet.core.domain.EthereumAccount;
 import net.wzero.wewallet.core.domain.Token;
 import net.wzero.wewallet.core.domain.Transaction;
-import net.wzero.wewallet.core.repo.CardRepository;
+import net.wzero.wewallet.core.repo.AccountRepository;
 import net.wzero.wewallet.core.repo.TokenRepository;
 import net.wzero.wewallet.core.repo.TransactionRepository;
 import net.wzero.wewallet.core.stream.CoreMessage;
@@ -23,7 +23,7 @@ public class EthJobsCallbackListener {
 	@Autowired
 	private TransactionRepository transactionRepository;
 	@Autowired
-	private CardRepository cardRepository;
+	private AccountRepository accountRepository;
 	@Autowired
 	private TokenRepository tokenRepository;
 	
@@ -37,9 +37,9 @@ public class EthJobsCallbackListener {
 		this.transactionRepository.save(transaction);
 	}
 	@StreamListener(CoreMessage.REFRESH_JOB_CALLBACK_INPUT)
-	public void refreshEthCard(Object param,@Header(name="jobType")int jobType) {
-		if(jobType == AppConstants.JOB_TYPE_REFRESH_CARD)
-			this.cardRepository.save((EthereumCard)param);
+	public void refreshEthAccount(Object param,@Header(name="jobType")int jobType) {
+		if(jobType == AppConstants.JOB_TYPE_REFRESH_ACCOUNT)
+			this.accountRepository.save((EthereumAccount)param);
 		else if(jobType == AppConstants.JOB_TYPE_REFRESH_TOKEN)
 			this.tokenRepository.save((Token)param);
 		else

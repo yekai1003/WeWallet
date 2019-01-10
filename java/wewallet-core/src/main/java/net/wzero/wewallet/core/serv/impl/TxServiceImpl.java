@@ -8,10 +8,10 @@ import org.springframework.integration.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
 import net.wzero.wewallet.WalletException;
-import net.wzero.wewallet.core.domain.Card;
+import net.wzero.wewallet.core.domain.Account;
 import net.wzero.wewallet.core.domain.Token;
 import net.wzero.wewallet.core.domain.Transaction;
-import net.wzero.wewallet.core.repo.CardRepository;
+import net.wzero.wewallet.core.repo.AccountRepository;
 import net.wzero.wewallet.core.repo.TokenRepository;
 import net.wzero.wewallet.core.repo.TransactionRepository;
 import net.wzero.wewallet.core.serv.TxService;
@@ -22,7 +22,7 @@ import net.wzero.wewallet.utils.AppConstants.EthEnv;
 public class TxServiceImpl implements TxService {
 
 	@Autowired
-	private CardRepository cardRepository;
+	private AccountRepository accountRepository;
 	@Autowired
 	private TokenRepository tokenRepository;
 	@Autowired
@@ -32,18 +32,18 @@ public class TxServiceImpl implements TxService {
 	private CoreMessage coreMessage;
 	
 	@Override
-	public Transaction createTransaction(Integer memberId, Integer cardId, String to, BigDecimal value,EthEnv env, String pwd) {
+	public Transaction createTransaction(Integer memberId, Integer accountId, String to, BigDecimal value,EthEnv env, String pwd) {
 		// memberId 校验应该放在 controller 里做好
-		// 获取卡片信息
-		Card card = this.cardRepository.findOne(cardId);
-		// 判断 memberId 是否可以 card匹配
-		if(card.getMemberId() != memberId) throw new WalletException("session_error","本用户没有此卡片！");
+		// 获取账户信息
+		Account account = this.accountRepository.findOne(accountId);
+		// 判断 memberId 是否可以 account匹配
+		if(account.getMemberId() != memberId) throw new WalletException("session_error","本用户没有此账户！");
 		// 插入数据库
 		Transaction tx = new Transaction();
 		tx.setMemberId(memberId);
 		tx.setEnv(env.getName());
 		tx.setStatus("-1");
-		tx.setFromAddr(card.getAddr());//还不知道 addr的格式 是否以0x 开头
+		tx.setFromAddr(account.getAddr());//还不知道 addr的格式 是否以0x 开头
 		tx.setToAddr(to);
 		tx.setValue(value.toString());//wei 单位
 //		tx.setTxHash(txHash); 此时无法获得，等待交易发送完成后返回，因此交易消息 应该带 上 Transaction 的id号
@@ -59,15 +59,15 @@ public class TxServiceImpl implements TxService {
 			EthEnv env, String pwd) {
 		//获取token信息
 		Token token = this.tokenRepository.findOne(tokenId);
-		// 判断 memberId 是否可以 card匹配
-		if(token.getCard().getMemberId() != memberId) throw new WalletException("session_error","本用户没有此卡片！");
+		// 判断 memberId 是否可以 account匹配
+		if(token.getAccount().getMemberId() != memberId) throw new WalletException("session_error","本用户没有此账户！");
 		// 插入数据库
 		Transaction tx = new Transaction();
 		tx.setContractAddr(token.getContractAddr());
 		tx.setMemberId(memberId);
 		tx.setEnv(env.getName());
 		tx.setStatus("-1");
-		tx.setFromAddr(token.getCard().getAddr());
+		tx.setFromAddr(token.getAccount().getAddr());
 		tx.setToAddr(to);
 		tx.setValue(value.toString());
 		tx = this.transactionRepository.save(tx);

@@ -17,23 +17,23 @@ public class TokenController extends BaseController {
 	
 	/**
 	 * 添加一个token
-	 * token是基于卡片的，因为token也需要一个地址
-	 * @param cardId
+	 * token是基于账户的，因为token也需要一个地址
+	 * @param accountId
 	 * @param contractAddr
 	 * @param standard
 	 * @return
 	 */
 	@RequestMapping("/addToken")
 	public Token addToken(
-			@RequestParam(name="cardId")Integer cardId,
+			@RequestParam(name="accountId")Integer accountId,
 			@RequestParam(name="env") String envStr,
 			@RequestParam(name="contractAddr")String contractAddr,
 			@RequestParam(name="standard",required=false,defaultValue="erc20")String standard) {
 		EthEnv env = EthEnv.valueOf(envStr);
-		return this.walletService.addToken(this.getMember().getId(), cardId,env, contractAddr, standard);
+		return this.walletService.addToken(this.getMember().getId(), accountId,env, contractAddr, standard);
 	}
 	/**
-	 * 和 card 一样实现异步刷新
+	 * 和 accountId 一样实现异步刷新
 	 * 和交易一样使用同一个消息通道
 	 * 不同的是 这里的消息不是同一个类的实例
 	 * @return

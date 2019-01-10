@@ -16,16 +16,16 @@ import net.wzero.wewallet.domain.EntityBase;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="cards")
-public class Card extends EntityBase {
+@Table(name="accounts")
+public class Account extends EntityBase {
 	@Id
 	@GeneratedValue
 	private Integer id;
 	// 账户的Id,这里是不同模块，所以不能强关联
 	private Integer memberId;
-	@JoinColumn(name="card_type_id")
+	@JoinColumn(name="account_type_id")
 	@ManyToOne
-	private CardType cardType;
+	private AccountType accountType;
 	//bip39 的路径
 	private String path;
 	//账户地址,方便其他业务，反正地址不可能推算出私钥
@@ -48,11 +48,11 @@ public class Card extends EntityBase {
 	public void setMemberId(Integer memberId) {
 		this.memberId = memberId;
 	}
-	public CardType getCardType() {
-		return cardType;
+	public AccountType getAccountType() {
+		return accountType;
 	}
-	public void setCardType(CardType cardType) {
-		this.cardType = cardType;
+	public void setAccountType(AccountType accountType) {
+		this.accountType = accountType;
 	}
 	public String getPath() {
 		return path;

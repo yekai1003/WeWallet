@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.wzero.wewallet.WalletException;
-import net.wzero.wewallet.core.domain.Card;
+import net.wzero.wewallet.core.domain.Account;
 import net.wzero.wewallet.core.domain.Mnemonic;
-import net.wzero.wewallet.core.repo.CardRepository;
+import net.wzero.wewallet.core.repo.AccountRepository;
 import net.wzero.wewallet.core.serv.CryptoService;
 import net.wzero.wewallet.core.serv.WalletService;
 import net.wzero.wewallet.domain.SessionData;
@@ -28,7 +28,7 @@ public class WalletController extends BaseController {
 	@Autowired
 	private CryptoService cryptoService;
 	@Autowired
-	private CardRepository cardRepository;
+	private AccountRepository accountRepository;
 	
 	/**
 	 * 随机一组助记词
@@ -41,58 +41,58 @@ public class WalletController extends BaseController {
 	/**
 	 * 基于随机种子创建一个钱包
 	 * 这个钱包可能不基于助记词
-	 * @param cardType
+	 * @param accountType
 	 * @return
 	 */
-	@RequestMapping("/createCard")
-	public Card createCard(@RequestParam(name="cardType")Integer cardType,
+	@RequestMapping("/createAccount")
+	public Account createAccount(@RequestParam(name="accountType")Integer accountType,
 			@RequestParam(name="pwd",required=false)String pwd) {
-		if(cardType == AppConstants.BITCOIN_CARD_TYPE)
+		if(accountType == AppConstants.BITCOIN_ACCOUNT_TYPE)
 			throw new WalletException("not_supported","还不支持比特币");
-		if(cardType == AppConstants.ETHEREUM_CARD_TYPE) {
+		if(accountType == AppConstants.ETHEREUM_ACCOUNT_TYPE) {
 			if(pwd == null) throw new WalletException("pwd_exist","当选择以太币的时候pwd参数不能为空");
 		}else {
 			throw new WalletException("not_supported","还不支持的币种");
 		}
-		Card card = this.walletService.createCard(this.getMember().getId(),pwd);
+		Account account = this.walletService.createAccount(this.getMember().getId(),pwd);
 		//做些啥？
-		return card; 
+		return account; 
 	}
 	/**
 	 * 用处比较多
 	 * 客户端生成助记词
 	 * 或者其他方式生成的助记词
 	 * @param mnemonic
-	 * @param cardType
+	 * @param accountType
 	 * @return
 	 */
-	@RequestMapping("/createCardByMnemonic")
-	public Card createCardByMnemonic(
+	@RequestMapping("/createAccountByMnemonic")
+	public Account createAccountByMnemonic(
 			@RequestParam(name="mnemonic")String mnemonic,
-			@RequestParam(name="cardType")Integer cardType,
+			@RequestParam(name="accountType")Integer accountType,
 			@RequestParam(name="pwd",required=false)String pwd) {
-		if(cardType == AppConstants.BITCOIN_CARD_TYPE)
+		if(accountType == AppConstants.BITCOIN_ACCOUNT_TYPE)
 			throw new WalletException("not_supported","还不支持比特币");
-		if(cardType == AppConstants.ETHEREUM_CARD_TYPE) {
+		if(accountType == AppConstants.ETHEREUM_ACCOUNT_TYPE) {
 			if(pwd == null) throw new WalletException("pwd_exist","当选择以太币的时候pwd参数不能为空");
 		}else {
 			throw new WalletException("not_supported","还不支持的币种");
 		}
 		//验证助记词是否符合要求
 		List<String> words =  Arrays.asList(mnemonic.replaceAll("\r\n", " ").split("[\\s|\n]"));
-		return this.walletService.createCard(this.getMember().getId(),words, pwd);
+		return this.walletService.createAccount(this.getMember().getId(),words, pwd);
 	}
 	@RequestMapping("/get")
-	public Card get(@RequestParam(name = "id") Integer id) {
-		return this.cardRepository.findOne(id);
+	public Account get(@RequestParam(name = "id") Integer id) {
+		return this.accountRepository.findOne(id);
 	}
 	/**
-	 * 列出账户下所有的卡片
+	 * 列出账户下所有的账户
 	 * @return
 	 */
-	@RequestMapping("/listCards")
-	public List<Card> listCards(){
-		return this.cardRepository.findByMemberId(this.getMember().getId());
+	@RequestMapping("/listAccounts")
+	public List<Account> listAccounts(){
+		return this.accountRepository.findByMemberId(this.getMember().getId());
 	}
 	/**
 	 * 刷新余额
@@ -102,7 +102,7 @@ public class WalletController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/refresh")
-	public Card refresh(@RequestParam(name = "id") Integer id) {
+	public Account refresh(@RequestParam(name = "id") Integer id) {
 //		throw new WalletException("not_implemented"," 未实现");
 		return this.walletService.refreshBalance(this.getMember().getId(), id);
 	}

@@ -7,7 +7,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 
 import net.wzero.wewallet.WalletException;
-import net.wzero.wewallet.core.domain.EthereumCard;
+import net.wzero.wewallet.core.domain.EthereumAccount;
 import net.wzero.wewallet.core.domain.Token;
 import net.wzero.wewallet.core.domain.Transaction;
 import net.wzero.wewallet.core.serv.EthService;
@@ -28,8 +28,8 @@ public class EthJobsWorker {
 	@StreamListener(value=WorkerMessage.REFRESH_JOB_INPUT)
 	@SendTo(value=WorkerMessage.REFRESH_JOB_CALLBACK_OUTPUT)
 	public Object refreshJob(Object param,@Header(name="jobType")int jobType,@Header(name="env")String env) {
-		if(jobType == AppConstants.JOB_TYPE_REFRESH_CARD)
-			return this.ethService.refreshEthBalance((EthereumCard)param,env);
+		if(jobType == AppConstants.JOB_TYPE_REFRESH_ACCOUNT)
+			return this.ethService.refreshEthBalance((EthereumAccount)param,env);
 		else if(jobType == AppConstants.JOB_TYPE_REFRESH_TOKEN)
 			return this.ethService.refreshTokenBalance((Token)param);
 		else

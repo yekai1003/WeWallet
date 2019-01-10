@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import net.wzero.wewallet.core.domain.Card;
+import net.wzero.wewallet.core.domain.Account;
 
-public interface CardRepository extends JpaRepository<Card, Integer> {
-	List<Card> findByMemberId(Integer memberId);
+public interface AccountRepository extends JpaRepository<Account, Integer> {
+	List<Account> findByMemberId(Integer memberId);
 	/**
 	 * 可以通过 memberId和addr 做个索引，做为唯一
 	 * @param memberId
 	 * @param addr
 	 * @return
 	 */
-	Card findByMemberIdAndAddr(Integer memberId,String addr);
+	Account findByMemberIdAndAddr(Integer memberId,String addr);
 }

@@ -19,9 +19,9 @@ public class Token extends EntityBase{
 	@GeneratedValue
 	private Integer id;
 	
-	@JoinColumn(name="card_id")
+	@JoinColumn(name="account_id")
 	@ManyToOne
-	private Card card;
+	private Account account;
 	/**
 	 * 是呼 合约还和网络有关系
 	 */
@@ -51,11 +51,11 @@ public class Token extends EntityBase{
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public Card getCard() {
-		return card;
+	public Account getAccount() {
+		return account;
 	}
-	public void setCard(Card card) {
-		this.card = card;
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 	public String getStandard() {
 		return standard;

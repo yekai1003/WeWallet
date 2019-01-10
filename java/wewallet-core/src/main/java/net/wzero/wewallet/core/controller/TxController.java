@@ -37,7 +37,7 @@ public class TxController extends BaseController {
 	 * 5、某台转账服务器获得消息后，操作实际的转账业务，当业务量井喷的时候，随时扩大服务器量
 	 * 6、转账完成后，发送成功后的消息到RabbitMQ
 	 * 7、交易创建服务器订阅发送成功的消息，并接收消息，更新交易数据（可能会有两个消息：1、发送交易，2、检查状态）
-	 * @param cardId
+	 * @param accountId
 	 * @param toAddress
 	 * @param value
 	 * @param unit
@@ -45,7 +45,7 @@ public class TxController extends BaseController {
 	 */
 	@RequestMapping("/transfer")
 	public Transaction transfer(
-			@RequestParam(name = "cardId") Integer cardId, 
+			@RequestParam(name = "accountId") Integer accountId, 
 			@RequestParam(name = "payPwd") String payPwd,
 			@RequestParam(name = "toAddress") String toAddress,
 			@RequestParam(name = "value") String value,
@@ -59,11 +59,11 @@ public class TxController extends BaseController {
 		if(env == null)
 			env = this.getMember().getCurrEnv();
 		if(env == null) throw new WalletException("env_not_set","选择当前钱包环境");
-		return this.txSerrvice.createTransaction(this.getMember().getId(), cardId, toAddress, val,EthEnv.fromString(env), payPwd);
+		return this.txSerrvice.createTransaction(this.getMember().getId(), accountId, toAddress, val,EthEnv.fromString(env), payPwd);
 	}
 	/**
 	 * 
-	 * token 基于一张卡的 token
+	 * token 基于一个账户的 token
 	 * token 本身是基于以太坊account的
 	 * @param tokenId token表的id号
 	 * @param payPwd 支付密码 因为合约的交易也需要授权

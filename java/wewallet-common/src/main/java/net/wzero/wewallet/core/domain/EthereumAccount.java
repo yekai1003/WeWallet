@@ -7,8 +7,8 @@ import javax.persistence.Table;
 
 @Entity
 @PrimaryKeyJoinColumn
-@Table(name="ethereum_cards")
-public class EthereumCard extends Card {
+@Table(name="ethereum_accounts")
+public class EthereumAccount extends Account {
 	/**
 	 * 不同币种可能对余额的表达不一样
 	 */

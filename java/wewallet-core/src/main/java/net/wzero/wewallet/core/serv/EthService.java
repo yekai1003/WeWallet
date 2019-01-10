@@ -1,7 +1,7 @@
 package net.wzero.wewallet.core.serv;
 
-import net.wzero.wewallet.core.domain.Card;
-import net.wzero.wewallet.core.domain.EthereumCard;
+import net.wzero.wewallet.core.domain.Account;
+import net.wzero.wewallet.core.domain.EthereumAccount;
 import net.wzero.wewallet.core.domain.Token;
 import net.wzero.wewallet.core.domain.Transaction;
 
@@ -13,7 +13,7 @@ public interface EthService {
 	
 	Transaction getTransactionReceipt(Transaction transaction);
 	
-	Card refreshEthBalance(EthereumCard card,String env);
+	Account refreshEthBalance(EthereumAccount account,String env);
 	
 	Token refreshTokenBalance(Token token);
 }

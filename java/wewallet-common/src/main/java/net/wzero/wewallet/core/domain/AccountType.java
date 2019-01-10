@@ -16,7 +16,7 @@ import net.wzero.wewallet.domain.EntityBase;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CardType extends EntityBase {
+public class AccountType extends EntityBase {
 	
 	@Id
 	private Integer id;
