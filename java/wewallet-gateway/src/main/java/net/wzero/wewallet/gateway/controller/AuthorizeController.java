@@ -23,17 +23,6 @@ public class AuthorizeController extends BaseController {
 	@Autowired
 	private AuthorizeService authorizeService;
 	
-	@RequestMapping("/login")
-	AuthorizeResponse login(@RequestParam(name = "username") String username,
-			@RequestParam(name = "password") String password) {
-		log.info("login:"+this.getClient().getClientName());
-		SessionData sd = this.authorizeService.login(username, password);
-		AuthorizeResponse res = new AuthorizeResponse();
-		res.setToken(sd.getToken());
-		res.setExpired(sd.getExpired());
-		return res;
-	}
-	
 	@RequestMapping(value="/idLogin")
 	AuthorizeResponse idLogin(@RequestParam(name="memberId")Integer memberId) {
 		throw new WalletException("null","测试时候用的!");
@@ -46,14 +35,33 @@ public class AuthorizeController extends BaseController {
 //		return res;
 	}
 	
+	@RequestMapping("/login")
+	AuthorizeResponse login(@RequestParam(name = "username") String username,
+			@RequestParam(name = "password") String password) {
+		log.info("login:"+this.getClient().getClientName());
+		SessionData sd = this.authorizeService.login(username, password);
+		AuthorizeResponse res = new AuthorizeResponse();
+		res.setToken(sd.getToken());
+		res.setExpired(sd.getExpired());
+		return res;
+	}
+	
+	@RequestMapping("/phoneLogin")
+	AuthorizeResponse phoneLogin(@RequestParam(name="phone")String phone,@RequestParam(name="vcode")String vcode) throws WxErrorException {
+		SessionData sd = this.authorizeService.phoneLogin(phone, vcode); // state是 clientId 这个是约定
+		AuthorizeResponse res = new AuthorizeResponse();
+		res.setToken(sd.getToken());
+		res.setExpired(sd.getExpired());
+		return res;
+	}
+	
 	@RequestMapping(value="/wxLogin")
 	AuthorizeResponse wxLogin(@RequestParam(name="code")String code) throws WxErrorException {
 		SessionData sd = null;
 		if("the code is a mock one".equals(code)) {//测试端发出的信息
 			sd = this.authorizeService.login(1,true);//1号id是管理员,第二个参数表示 测试
 		}else {
-			//state是 clientId 这个是约定
-			sd = this.authorizeService.weixinLogin(code);
+			sd = this.authorizeService.weixinLogin(code); //state是 clientId 这个是约定
 		}
 		AuthorizeResponse res = new AuthorizeResponse();
 		res.setToken(sd.getToken());
@@ -68,13 +76,4 @@ public class AuthorizeController extends BaseController {
 		return new OkResponse();
 	}
 		
-	@RequestMapping("/phoneLogin")
-	AuthorizeResponse phoneLogin(@RequestParam(name="phone")String phone,@RequestParam(name="vcode")String vcode) throws WxErrorException {
-		//state是 clientId 这个是约定
-		SessionData sd = this.authorizeService.phoneLogin(phone, vcode);
-		AuthorizeResponse res = new AuthorizeResponse();
-		res.setToken(sd.getToken());
-		res.setExpired(sd.getExpired());
-		return res;
-	}
 }

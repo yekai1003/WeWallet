@@ -14,19 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
 import net.wzero.wewallet.domain.MemberInfo;
-import net.wzero.wewallet.domain.SessionData;
-import net.wzero.wewallet.gateway.domain.Client;
 import net.wzero.wewallet.gateway.domain.Member;
 import net.wzero.wewallet.gateway.domain.MemberWechat;
 import net.wzero.wewallet.gateway.serv.MemberSessionService;
+import net.wzero.wewallet.gateway.serv.MemberWechatService;
+import net.wzero.wewallet.gateway.serv.SessionDataService;
 import net.wzero.wewallet.gateway.serv.UserGroupService;
 import net.wzero.wewallet.gateway.serv.UserService;
 import net.wzero.wewallet.gateway.serv.WechatService;
 import net.wzero.wewallet.res.OkResponse;
-import net.wzero.wewallet.serv.SessionService;
 import net.wzero.wewallet.utils.AppConstants;
 import net.wzero.wewallet.utils.AppConstants.EthEnv;
-import net.wzero.wewallet.utils.JsonUtils;
 import net.wzero.wewallet.utils.ValidateUtils;
 
 @Slf4j
@@ -35,13 +33,17 @@ import net.wzero.wewallet.utils.ValidateUtils;
 public class UserController extends BaseController {
 
 	@Autowired
+	private UserService userService;
+	@Autowired
 	private UserGroupService userGroupService;
 	@Autowired
-	private UserService userService;
+	private MemberWechatService memberWechatService;
+	@Autowired
+	private MemberSessionService memberSessionService;
 	@Autowired
 	private WechatService wechatService;
 	@Autowired
-	private MemberSessionService memberSessionService;
+	private SessionDataService sessionDataService;
 	
 	/**
 	 * 用户创建member、member_account
@@ -97,8 +99,6 @@ public class UserController extends BaseController {
 		if(member == null) throw new WalletException("member_not_found","账户不存在");
 		return member;
 	}
-	@Autowired
-	private SessionService sessionService;
 	
 	/**
 	 * 保存到 member mData里，下次启动加载配置到session
@@ -107,10 +107,8 @@ public class UserController extends BaseController {
 	@RequestMapping("/setCurrEnv")
 	public OkResponse setCurrEnv(@RequestParam(name="env") String envName) {
 		EthEnv env = EthEnv.valueOf(envName);
-		SessionData sd = this.getSessionData();
-		sd.getMember().setCurrEnv(env.getName());
-		this.sessionService.save(sd);
-		// 保存到缓存
+		this.sessionDataService.update(super.getSessionData(), env); // 保存到缓存
+		
 		Member member = this.userService.findByMemberId(this.getMember().getId());
 		if(member.getmData() == null)
 			member.setmData(new HashMap<>());
@@ -199,14 +197,10 @@ public class UserController extends BaseController {
 			@RequestParam(name="encryptedData") String encryptedData,
 			@RequestParam(name="iv") String iv,
 			@RequestParam(name="rawData", required=false) String rawData) {
-		Client client = this.getClient();
-		if(client.getClientData() == null) throw new WalletException("weixin_config_empty","客户端没有配置微信");
-		String wxAppIdStr = client.getClientData().get(AppConstants.WX_APP_ID_KEY);
-		if(wxAppIdStr == null) throw new WalletException("weixin_login_not_allowed","客户端不允许微信登录或者未配置微信登录");
 		String sessionKey = this.getSessionData().getWxSessionKey();
 		if(sessionKey == null) throw new WalletException("op_failed","不应该没有session_key，重新登陆可能解决此问题");
 		log.info("sessionKey: " + sessionKey);
-		MemberWechat memberWeixin = this.wechatService.getUserByWxMa(Integer.parseInt(wxAppIdStr), sessionKey, encryptedData, iv);
+		MemberWechat memberWeixin = this.memberWechatService.getUserByWxMa(this.wechatService.getWxappIdByClient(), sessionKey, encryptedData, iv);
 		log.info("更新{}号WemberWeixin信息", memberWeixin.getId());
 		return memberWeixin;
 	}
@@ -221,7 +215,7 @@ public class UserController extends BaseController {
 	public Object getMemberWeixin(
 			@RequestParam(name="mid") Integer mid,
 			@RequestParam(name="cid") Integer cid) {
-		return this.wechatService.getUserByMemberIdAndClientId(mid, cid);
+		return this.memberWechatService.findByMemberIdAndClientId(mid, cid);
 	}
 	
 	/**
@@ -231,10 +225,9 @@ public class UserController extends BaseController {
 	 */
 	@RequestMapping("/getMemberWeixins")
 	public List<MemberWechat> getMemberWeixins(@RequestParam(name="mid") Integer mid) {
-		List<MemberWechat> memberWeixins = this.wechatService.getUserByMemberId(mid);
-		log.info(JsonUtils.serialize(memberWeixins));
+		List<MemberWechat> memberWeixins = this.memberWechatService.getUserByMemberId(mid);
 		for (MemberWechat memberWeixin : memberWeixins) {
-			log.info("getMemberWeixins: "+memberWeixin.getAppType());
+			log.info("memberWeixin: "+memberWeixin.getAppType());
 		}
 		return memberWeixins;
 	}
