@@ -30,6 +30,7 @@ public class Account extends EntityBase {
 	private String path;
 	//账户地址,方便其他业务，反正地址不可能推算出私钥
 	private String addr;
+	private String mark;
 	@Column(columnDefinition="tinyint(1) default 0")
 	private Boolean isRefreshing;
 	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
@@ -65,6 +66,12 @@ public class Account extends EntityBase {
 	}
 	public void setAddr(String addr) {
 		this.addr = addr;
+	}
+	public String getMark() {
+		return mark;
+	}
+	public void setMark(String mark) {
+		this.mark = mark;
 	}
 	public Date getCreated() {
 		return created;

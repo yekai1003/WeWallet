@@ -49,7 +49,7 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 	 * 默认遵循 BIP44
 	 */
 	@Override
-	public Account createAccount(Integer memberId,String pwd) {
+	public Account createAccount(Integer memberId,String pwd, String mark) {
 		try {
 			// 取得账户类型
 			AccountType ct = this.accountTypeRepository.getOne(AppConstants.ETHEREUM_ACCOUNT_TYPE);
@@ -69,6 +69,10 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 			account.setKeystore(keystore);//
 			account.setMemberId(memberId);
 			account.setPath("m/44'/60'/0'/0/0");
+			if(mark == null) {
+				account.setMark("account"+(this.findByMemberId(memberId).size()+1));
+			} else 
+				account.setMark(mark);
 			// 保存
 			return this.accountRepository.save(account);
 		} catch (ValidationException e) {
@@ -79,7 +83,7 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 	}
 
 	@Override
-	public Account createAccount(Integer memberId,List<String> words,String pwd) {
+	public Account createAccount(Integer memberId,List<String> words,String pwd, String mark) {
 		// 取得账户类型
 		AccountType ct = this.accountTypeRepository.getOne(AppConstants.ETHEREUM_ACCOUNT_TYPE);
 		try {
@@ -102,6 +106,10 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 			account.setKeystore(keystore);//
 			account.setMemberId(memberId);
 			account.setPath("m/44'/60'/0'/0/0");//以太坊现在默认
+			if(mark == null) {
+				account.setMark("account"+(this.findByMemberId(memberId).size()+1));
+			} else 
+				account.setMark(mark);
 			// 保存
 			return this.accountRepository.save(account);
 		} catch (ValidationException e) {
@@ -177,4 +185,10 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 				/*.setHeader("env", token.getEnv())*/.build()); // 理论上 env header 不需要了
 		return token;
 	}
+	
+	@Override
+	public List<Account> findByMemberId(Integer memberId) {
+		return this.accountRepository.findByMemberId(this.getMember().getId());
+	}
+	
 }

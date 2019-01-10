@@ -13,14 +13,14 @@ public interface WalletService {
 	 * 用BIP44 方式创建，这个作为统一项
 	 * @return
 	 */
-	Account createAccount(Integer memberId,String pwd);
+	Account createAccount(Integer memberId,String pwd, String mark);
 	/**
 	 * 通过助记词创建一个账户
 	 * 账应该是统一的，默认使用根地址，比特币不知道是否也是那个根地址
 	 * @param mnemonic
 	 * @return
 	 */
-	Account createAccount(Integer memberId,List<String> words,String pwd);
+	Account createAccount(Integer memberId,List<String> words,String pwd, String mark);
 	/**
 	 * 刷新账户以太坊余额
 	 * @param accountId
@@ -43,4 +43,10 @@ public interface WalletService {
 	 * @return
 	 */
 	Token refreshTokenBalance(Integer memberId,Integer tokenId);
+	/**
+	 * 查询用户的所有账户
+	 * @param memberId
+	 * @return
+	 */
+	List<Account> findByMemberId(Integer memberId);
 }

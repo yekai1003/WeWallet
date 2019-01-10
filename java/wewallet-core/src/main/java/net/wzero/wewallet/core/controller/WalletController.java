@@ -45,8 +45,10 @@ public class WalletController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/createAccount")
-	public Account createAccount(@RequestParam(name="accountType")Integer accountType,
-			@RequestParam(name="pwd",required=false)String pwd) {
+	public Account createAccount(
+			@RequestParam(name="accountType")Integer accountType,
+			@RequestParam(name="pwd",required=false)String pwd,
+			@RequestParam(name="mark",required=false)String mark) {
 		if(accountType == AppConstants.BITCOIN_ACCOUNT_TYPE)
 			throw new WalletException("not_supported","还不支持比特币");
 		if(accountType == AppConstants.ETHEREUM_ACCOUNT_TYPE) {
@@ -54,7 +56,7 @@ public class WalletController extends BaseController {
 		}else {
 			throw new WalletException("not_supported","还不支持的币种");
 		}
-		Account account = this.walletService.createAccount(this.getMember().getId(),pwd);
+		Account account = this.walletService.createAccount(this.getMember().getId(),pwd, mark);
 		//做些啥？
 		return account; 
 	}
@@ -70,7 +72,8 @@ public class WalletController extends BaseController {
 	public Account createAccountByMnemonic(
 			@RequestParam(name="mnemonic")String mnemonic,
 			@RequestParam(name="accountType")Integer accountType,
-			@RequestParam(name="pwd",required=false)String pwd) {
+			@RequestParam(name="pwd",required=false)String pwd,
+			@RequestParam(name="mark",required=false)String mark) {
 		if(accountType == AppConstants.BITCOIN_ACCOUNT_TYPE)
 			throw new WalletException("not_supported","还不支持比特币");
 		if(accountType == AppConstants.ETHEREUM_ACCOUNT_TYPE) {
@@ -80,7 +83,7 @@ public class WalletController extends BaseController {
 		}
 		//验证助记词是否符合要求
 		List<String> words =  Arrays.asList(mnemonic.replaceAll("\r\n", " ").split("[\\s|\n]"));
-		return this.walletService.createAccount(this.getMember().getId(),words, pwd);
+		return this.walletService.createAccount(this.getMember().getId(),words, pwd, mark);
 	}
 	@RequestMapping("/get")
 	public Account get(@RequestParam(name = "id") Integer id) {
