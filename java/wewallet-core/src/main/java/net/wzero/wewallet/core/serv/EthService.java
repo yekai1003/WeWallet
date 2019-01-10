@@ -15,5 +15,5 @@ public interface EthService {
 	
 	Card refreshEthBalance(EthereumCard card,String env);
 	
-	Token refreshTokenBalance(Token token,String env);
+	Token refreshTokenBalance(Token token);
 }

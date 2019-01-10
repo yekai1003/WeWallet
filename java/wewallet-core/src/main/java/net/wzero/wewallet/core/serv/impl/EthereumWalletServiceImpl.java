@@ -140,16 +140,17 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 	}
 
 	@Override
-	public Token addToken(Integer memberId, Integer cardId, String contractAddr, String standard) {
+	public Token addToken(Integer memberId, Integer cardId,EthEnv env, String contractAddr, String standard) {
 		//先获取card
 		Card card = this.cardRepository.findOne(cardId);
 		if(card == null) throw new WalletException("card_not_exist","指定的CardID不存在");
 		if(card.getMemberId() != memberId) throw new WalletException("session_error","本账户不包含此卡片");
 		// 看下token是否存在
-		Token token = this.tokenRepository.findByCardIdAndContractAddr(cardId, contractAddr);
+		Token token = this.tokenRepository.findByCardIdAndContractAddrAndEnv(cardId, contractAddr,env.getName());
 		if(token != null) throw new WalletException("token_exist","此token已经存在，请勿重复添加");
 		token = new Token();
 		token.setCard(card);
+		token.setEnv(env.getName());
 		token.setContractAddr(contractAddr);
 		token.setStandard(standard);
 		token.setBalance("0");
@@ -159,11 +160,12 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 	@Override
 	public Token refreshTokenBalance(Integer memberId, Integer tokenId) {
 		// 判断环境是否已经配置
-		if(this.getMember().getCurrEnv() == null) throw new WalletException("env_not_set","请先设置当前环境");
-		EthEnv env = EthEnv.fromString(this.getMember().getCurrEnv());
-		
-		// 获取token信息
+//		if(this.getMember().getCurrEnv() == null) throw new WalletException("env_not_set","请先设置当前环境");
+//		EthEnv env = EthEnv.fromString(this.getMember().getCurrEnv());
 		Token token = this.tokenRepository.findOne(tokenId);
+		// token 应该自带 env
+		//EthEnv env = EthEnv.fromString(token.getEnv());
+		// 获取token信息
 		if(token == null) throw new WalletException("token_not_exist","指定的id不存在");
 		
 		if(!token.getCard().getMemberId().equals(memberId)) throw new WalletException("op_failed","只能操作本账户下的token");
@@ -172,7 +174,7 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 		// 发送一个消息 到rabbitmq
 		this.coreMessage.refreshJob().send(MessageBuilder.withPayload(token)
 				.setHeader("jobType", AppConstants.JOB_TYPE_REFRESH_TOKEN)
-				.setHeader("env", env.getName()).build());
+				/*.setHeader("env", token.getEnv())*/.build()); // 理论上 env header 不需要了
 		return token;
 	}
 }

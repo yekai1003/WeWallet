@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.wzero.wewallet.core.domain.Token;
 import net.wzero.wewallet.core.serv.WalletService;
+import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
 @RestController
 @RequestMapping("/token")
@@ -25,9 +26,11 @@ public class TokenController extends BaseController {
 	@RequestMapping("/addToken")
 	public Token addToken(
 			@RequestParam(name="cardId")Integer cardId,
+			@RequestParam(name="env") String envStr,
 			@RequestParam(name="contractAddr")String contractAddr,
 			@RequestParam(name="standard",required=false,defaultValue="erc20")String standard) {
-		return this.walletService.addToken(this.getMember().getId(), cardId, contractAddr, standard);
+		EthEnv env = EthEnv.valueOf(envStr);
+		return this.walletService.addToken(this.getMember().getId(), cardId,env, contractAddr, standard);
 	}
 	/**
 	 * 和 card 一样实现异步刷新

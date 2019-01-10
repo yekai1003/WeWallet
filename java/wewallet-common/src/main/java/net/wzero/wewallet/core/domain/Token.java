@@ -23,6 +23,10 @@ public class Token extends EntityBase{
 	@ManyToOne
 	private Card card;
 	/**
+	 * 是呼 合约还和网络有关系
+	 */
+	private String env;
+	/**
 	 * token类型，erc20
 	 */
 	private String standard;
@@ -88,6 +92,12 @@ public class Token extends EntityBase{
 	}
 	public void setIsRefreshing(Boolean isRefreshing) {
 		this.isRefreshing = isRefreshing;
+	}
+	public String getEnv() {
+		return env;
+	}
+	public void setEnv(String env) {
+		this.env = env;
 	}
 	
 }

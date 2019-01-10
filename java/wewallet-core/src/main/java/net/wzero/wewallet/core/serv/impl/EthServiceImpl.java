@@ -258,8 +258,8 @@ public class EthServiceImpl implements EthService,InitializingBean {
 	}
 
 	@Override
-	public Token refreshTokenBalance(Token token,String env) {
-		Web3j web3j = ethEnvMap.get(env);
+	public Token refreshTokenBalance(Token token) {
+		Web3j web3j = ethEnvMap.get(token.getEnv());//token 肯定是部署在某个 环境上的，因此 token结构体里应该自带 env
 		String methodName = "balanceOf";
 		@SuppressWarnings("rawtypes")
 		List<Type> inputParameters = new ArrayList<>();
