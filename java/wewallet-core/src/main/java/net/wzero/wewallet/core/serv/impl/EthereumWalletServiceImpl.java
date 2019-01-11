@@ -160,7 +160,8 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 	}
 
 	@Override
-	public Token addToken(Integer memberId, Integer accountId, EthEnv env, String contractAddr, String standard, String icon) {
+	public Token addToken(Integer memberId, Integer accountId, EthEnv env, String contractAddr, String standard, String icon, 
+			String name, String symbol, Integer decimals) {
 		//先获取account
 		Account account = this.accountRepository.findOne(accountId);
 		if(account == null) throw new WalletException("account_not_exist","指定的AccountID不存在");
@@ -175,6 +176,9 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 		token.setStandard(standard);
 		token.setIcon(icon);
 		token.setBalance("0");
+		token.setName(name);
+		token.setSymbol(symbol);
+		token.setDecimals(decimals);
 		return this.tokenRepository.save(token);
 	}
 	

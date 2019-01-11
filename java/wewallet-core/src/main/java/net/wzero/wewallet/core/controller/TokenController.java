@@ -30,9 +30,13 @@ public class TokenController extends BaseController {
 			@RequestParam(name="env") String envStr,
 			@RequestParam(name="contractAddr")String contractAddr,
 			@RequestParam(name="standard",required=false,defaultValue="erc20")String standard,
-			@RequestParam(name="icon",required=false)String icon) {
+			@RequestParam(name="icon",required=false)String icon,
+			@RequestParam(name="name",required=false)String name,
+			@RequestParam(name="symbol",required=false)String symbol,
+			@RequestParam(name="decimals",required=false, defaultValue="0")Integer decimals) {
 		EthEnv env = EthEnv.valueOf(envStr);
-		return this.walletService.addToken(this.getMember().getId(), accountId,env, contractAddr, standard, icon);
+		decimals = decimals & 0x00ff;
+		return this.walletService.addToken(this.getMember().getId(), accountId,env, contractAddr, standard, icon, name, symbol, decimals);
 	}
 	/**
 	 * 和 accountId 一样实现异步刷新

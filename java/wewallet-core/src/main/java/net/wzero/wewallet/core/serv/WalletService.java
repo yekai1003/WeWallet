@@ -37,7 +37,7 @@ public interface WalletService {
 	 * @param standard
 	 * @return
 	 */
-	Token addToken(Integer memberId,Integer accountId,EthEnv env,String contractAddr,String standard, String icon);
+	Token addToken(Integer memberId,Integer accountId,EthEnv env,String contractAddr,String standard, String icon, String name, String symbol, Integer decimals);
 	Token updateTokn(Token token, String contractAddr,String standard, String icon);
 	Token findByTokenId(Integer tokenId);
 	/**

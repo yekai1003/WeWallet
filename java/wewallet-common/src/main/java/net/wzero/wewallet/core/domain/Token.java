@@ -39,6 +39,12 @@ public class Token extends EntityBase{
 	private String balance;
 	
 	private String icon;
+	
+	private String name;
+	private String symbol;
+	@Column(columnDefinition = "SMALLINT")
+	private Integer decimals;
+	private String totalSupply;
 
 	@Column(columnDefinition="tinyint(1) default 0")
 	private Boolean isRefreshing;
@@ -82,6 +88,30 @@ public class Token extends EntityBase{
 	}
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getSymbol() {
+		return symbol;
+	}
+	public void setSymbol(String symbol) {
+		this.symbol = symbol;
+	}
+	public Integer getDecimals() {
+		return decimals;
+	}
+	public void setDecimals(Integer decimals) {
+		this.decimals = decimals;
+	}
+	public String getTotalSupply() {
+		return totalSupply;
+	}
+	public void setTotalSupply(String totalSupply) {
+		this.totalSupply = totalSupply;
 	}
 	public Date getCreated() {
 		return created;
