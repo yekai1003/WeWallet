@@ -2,9 +2,10 @@ package net.wzero.wewallet.core.controller;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.List;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +14,9 @@ import org.web3j.utils.Convert;
 import net.wzero.wewallet.WalletException;
 import net.wzero.wewallet.core.domain.Transaction;
 import net.wzero.wewallet.core.repo.TransactionRepository;
+import net.wzero.wewallet.core.serv.TransactionQueryService;
 import net.wzero.wewallet.core.serv.TxService;
+import net.wzero.wewallet.query.TransactionQuery;
 import net.wzero.wewallet.res.OkResponse;
 import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
@@ -23,6 +26,8 @@ public class TxController extends BaseController {
 
 	@Autowired
 	private TxService txSerrvice;
+	@Autowired
+	private TransactionQueryService transactionQueryService;
 	@Autowired
 	private TransactionRepository transactionRepository;
 	
@@ -95,10 +100,24 @@ public class TxController extends BaseController {
 		if(tmp == null) throw new WalletException("id_not_exist","交易ID不存在");
 		return tmp;
 	}
+	
 	@RequestMapping("/list")
-	public List<Transaction> list() {
-		return this.transactionRepository.findByMemberId(this.getMember().getId());
+	public Page<Transaction> list(
+			@RequestParam(name="page", defaultValue="0") Integer page,
+			@RequestParam(name="size", defaultValue="20", required=false) Integer size,
+			@RequestParam(name = "begin", required=false) Date begin,
+			@RequestParam(name = "end", required=false) Date end,
+			@RequestParam(name="status", required=false) String status) {
+		TransactionQuery transactionQuery = new TransactionQuery();
+		transactionQuery.setMemberId(this.getMember().getId());
+		if(status != null) transactionQuery.setStauts(status);
+		if(begin != null && end != null)
+			if(begin.compareTo(end) > 0) throw new WalletException("params_error","开始时间不能大于结束时间");
+		if(begin != null) transactionQuery.setBegin(begin);
+		if(end != null) transactionQuery.setEnd(end);
+		return this.transactionQueryService.findTransactionCriteria(page, size, transactionQuery);
 	}
+	
 	/**
 	 * 刷新交易，这里是手动的刷新，理论上服务器也会自动去刷新
 	 * @param id 交易ID号
