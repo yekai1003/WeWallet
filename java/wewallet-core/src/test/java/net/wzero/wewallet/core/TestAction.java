@@ -208,4 +208,10 @@ public class TestAction {
 		EthEnv envStr = EthEnv.fromString("123");
 		System.out.println(envStr);
 	}
+	@Test
+	public void doAction10() {
+		String value = "1.0";
+		BigDecimal val = Convert.toWei(new BigDecimal(value), Convert.Unit.fromString("ether"));
+		System.out.println(val.toBigInteger().toString());
+	}
 }
