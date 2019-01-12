@@ -45,7 +45,7 @@ public class TxServiceImpl implements TxService {
 		tx.setStatus("-1");
 		tx.setFromAddr(account.getAddr());//还不知道 addr的格式 是否以0x 开头
 		tx.setToAddr(to);
-		tx.setValue(value.toString());//wei 单位
+		tx.setValue(value.toBigInteger().toString());//wei 单位 所以去掉后面小数位，一般是 .0
 //		tx.setTxHash(txHash); 此时无法获得，等待交易发送完成后返回，因此交易消息 应该带 上 Transaction 的id号
 		// 保存
 		tx = this.transactionRepository.save(tx);
