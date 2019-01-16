@@ -1,5 +1,8 @@
 package net.wzero.wewallet.core.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -7,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.wzero.wewallet.WalletException;
 import net.wzero.wewallet.core.domain.Token;
+import net.wzero.wewallet.core.repo.TokenRepository;
 import net.wzero.wewallet.core.serv.WalletService;
 import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
@@ -15,6 +19,8 @@ import net.wzero.wewallet.utils.AppConstants.EthEnv;
 public class TokenController extends BaseController {
 	@Autowired
 	private WalletService walletService;
+	@Autowired
+	private TokenRepository tokenRepository;
 	
 	/**
 	 * 添加一个token
@@ -37,6 +43,16 @@ public class TokenController extends BaseController {
 		EthEnv env = EthEnv.valueOf(envStr);
 		decimals = decimals & 0x00ff;
 		return this.walletService.addToken(this.getMember().getId(), accountId,env, contractAddr, standard, icon, name, symbol, decimals);
+	}
+
+	@RequestMapping("/list")
+	public List<Token> list(
+			@RequestParam(name="accountId")Integer accountId,
+			@RequestParam(name="env")String env){
+		List<Token> tokens = this.tokenRepository.findByAccountIdAndEnv(accountId, env);
+		if(tokens == null)
+			tokens = new ArrayList<>(); // 不抛出异常了
+		return tokens;
 	}
 	/**
 	 * 和 accountId 一样实现异步刷新

@@ -21,6 +21,23 @@ public interface WalletService {
 	 * @return
 	 */
 	Account createAccount(Integer memberId,List<String> words,String pwd, String mark);
+	/**
+	 *   通过 私钥 创建账户
+	 * @param memberId
+	 * @param privateKey
+	 * @param pwd
+	 * @param mark
+	 * @return
+	 */
+	Account createAccount(Integer memberId,String privateKey,String pwd,String mark);
+	/**
+	 * 通过keystore 创建账户
+	 * @param memberId
+	 * @param keystore
+	 * @param mark
+	 * @return
+	 */
+	Account createAccountByKeystore(Integer memberId,String keystore,String mark);
 	Account updateAccount(Account account, String mark);
 	Account findByAccountId(Integer accountId);
 	/**

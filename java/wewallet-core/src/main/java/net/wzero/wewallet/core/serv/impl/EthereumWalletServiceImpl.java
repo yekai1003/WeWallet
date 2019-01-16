@@ -1,5 +1,6 @@
 package net.wzero.wewallet.core.serv.impl;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import com.quincysx.crypto.bip39.SeedCalculator;
 import com.quincysx.crypto.bip44.AddressIndex;
 import com.quincysx.crypto.bip44.CoinPairDerive;
 import com.quincysx.crypto.ethereum.EthECKeyPair;
+import com.quincysx.crypto.ethereum.keystore.KeyStoreFile;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
@@ -94,7 +96,7 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 			// 提供的方法来操作 这是 BIP44 标准的子私钥获取方式 m/44'/60'/0'/0/0 以太坊获取第一个就好了
 			EthECKeyPair eKey = this.makeKeyPairByPath(extendedKey, "m/44'/60'/0'/0/0");
 			String keystore = this.cryptoService.encryptKeystore(eKey,pwd);// password 需要外部提供
-
+			
 			log.info("address->\t"+eKey.getAddress());
 			//检查 此账户用户是否已经绑定过
 			EthereumAccount account =  (EthereumAccount)this.accountRepository.findByMemberIdAndAddr(memberId, eKey.getAddress());
@@ -118,6 +120,65 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 			throw new WalletException("validation_exception","编码错误");
 		}
 	}
+
+	@Override
+	public Account createAccount(Integer memberId, String privateKey, String pwd, String mark) {
+		// 取得账户类型
+		AccountType ct = this.accountTypeRepository.getOne(AppConstants.ETHEREUM_ACCOUNT_TYPE);
+		
+		String keystore = this.cryptoService.encryptKeystore(privateKey, pwd);
+		// 解密开，获得地址用
+		EthECKeyPair eKeyPair = this.cryptoService.decryptKeystore(keystore, pwd);
+		
+		EthereumAccount account =  (EthereumAccount)this.accountRepository.findByMemberIdAndAddr(memberId, eKeyPair.getAddress());
+		if(account != null) throw new WalletException("account_exist","账户已经存在");
+		account = new EthereumAccount();
+		account.setAddr(eKeyPair.getAddress());
+		account.setBalance("0");
+		account.setAccountType(ct);// 需要传递参数
+		account.setKeystore(keystore);//
+		account.setMemberId(memberId);
+		account.setPath("m/44'/60'/0'/0/0");//以太坊现在默认
+		if(mark == null) {
+			account.setMark("account"+(this.findByMemberId(memberId).size()+1));
+		} else 
+			account.setMark(mark);
+		// 保存
+		return this.accountRepository.save(account);
+	}
+
+
+	@Override
+	public Account createAccountByKeystore(Integer memberId, String keystore, String mark) {
+		// 取得账户类型
+		AccountType ct = this.accountTypeRepository.getOne(AppConstants.ETHEREUM_ACCOUNT_TYPE);
+		
+		KeyStoreFile ksFile;
+		try {
+			ksFile = KeyStoreFile.parse(keystore);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("keystore_format_error","JSON 数据有问题");
+		}
+				
+		EthereumAccount account =  (EthereumAccount)this.accountRepository.findByMemberIdAndAddr(memberId, ksFile.getAddress());
+		if(account != null) throw new WalletException("account_exist","账户已经存在");
+		account = new EthereumAccount();
+		account.setAddr(ksFile.getAddress());
+		account.setBalance("0");
+		account.setAccountType(ct);// 需要传递参数
+		account.setKeystore(keystore.toString());//
+		account.setMemberId(memberId);
+		account.setPath("m/44'/60'/0'/0/0");//以太坊现在默认
+		if(mark == null) {
+			account.setMark("account"+(this.findByMemberId(memberId).size()+1));
+		} else 
+			account.setMark(mark);
+		// 保存
+		return this.accountRepository.save(account);
+	}
+
 	
 	@Override
 	public Account findByAccountId(Integer accountId) {
@@ -220,5 +281,4 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 	public List<Account> findByMemberId(Integer memberId) {
 		return this.accountRepository.findByMemberId(this.getMember().getId());
 	}
-	
 }

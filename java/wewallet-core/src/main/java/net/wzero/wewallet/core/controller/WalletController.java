@@ -66,6 +66,8 @@ public class WalletController extends BaseController {
 	 * 或者其他方式生成的助记词
 	 * @param mnemonic
 	 * @param accountType
+	 * @param pwd
+	 * @param mark
 	 * @return
 	 */
 	@RequestMapping("/createAccountByMnemonic")
@@ -84,6 +86,51 @@ public class WalletController extends BaseController {
 		//验证助记词是否符合要求
 		List<String> words =  Arrays.asList(mnemonic.replaceAll("\r\n", " ").split("[\\s|\n]"));
 		return this.walletService.createAccount(this.getMember().getId(),words, pwd, mark);
+	}
+	/**
+	 * 用私钥创建账户，需要提供加密密码
+	 * @param privateKey
+	 * @param accountType
+	 * @param pwd
+	 * @param mark
+	 * @return
+	 */
+	@RequestMapping("/createAccountByPrivateKey")
+	public Account createAccountByPrivateKey(
+			@RequestParam(name="privateKey")String privateKey,
+			@RequestParam(name="accountType")Integer accountType,
+			@RequestParam(name="pwd",required=false)String pwd,
+			@RequestParam(name="mark",required=false)String mark) {
+		if(accountType == AppConstants.BITCOIN_ACCOUNT_TYPE)
+			throw new WalletException("not_supported","还不支持比特币");
+		if(accountType == AppConstants.ETHEREUM_ACCOUNT_TYPE) {
+			if(pwd == null) throw new WalletException("pwd_exist","当选择以太币的时候pwd参数不能为空");
+		}else {
+			throw new WalletException("not_supported","还不支持的币种");
+		}
+		// 是否验证下private Key的有效性？
+		return this.walletService.createAccount(this.getMember().getId(), privateKey, pwd, mark);
+	}
+	/**
+	 * keystore json 文件来创建账户，不用提供密码，用户应该知道自己的密码
+	 * @param keystore
+	 * @param accountType
+	 * @param mark
+	 * @return
+	 */
+	@RequestMapping("/createAccountByKeystore")
+	public Account createAccountByKeystore(
+			@RequestParam(name="keystore")String keystore,
+			@RequestParam(name="accountType")Integer accountType,
+			@RequestParam(name="mark",required=false)String mark) {
+		if(accountType == AppConstants.BITCOIN_ACCOUNT_TYPE)
+			throw new WalletException("not_supported","还不支持比特币");
+		if(accountType == AppConstants.ETHEREUM_ACCOUNT_TYPE) {
+			// 无需密码
+		}else {
+			throw new WalletException("not_supported","还不支持的币种");
+		}
+		return this.walletService.createAccountByKeystore(this.getMember().getId(), keystore, mark);
 	}
 	
 	@RequestMapping("/get")

@@ -31,6 +31,7 @@ import net.wzero.wewallet.utils.ValidateUtils;
 
 @Slf4j
 @Service("userService")
+@Transactional
 public class UserServiceImpl extends SysParamSupport implements UserService {
 	
 	@Autowired
@@ -44,7 +45,6 @@ public class UserServiceImpl extends SysParamSupport implements UserService {
 	@Autowired
 	private MemberAccountService memberAccountService;
 	
-	@Transactional
 	@Override
 	public Member addMemberAndMemberAccount(String userName, String loginName, String loginPwd, UserGroup userGroup, String phone) {
 		MemberAccount tmpMa = this.memberAccountService.findByLoginName(loginName); // 检查 loginname存在否
