@@ -46,6 +46,7 @@ public class TxController extends BaseController {
 	 * @param toAddress
 	 * @param value
 	 * @param unit
+	 * @param env
 	 * @return 交易结构体
 	 */
 	@RequestMapping("/transfer")
@@ -77,6 +78,7 @@ public class TxController extends BaseController {
 	 * @param env 环境可选
 	 * @return
 	 */
+	@RequestMapping("/erc20TokenTransfer")
 	public Transaction erc20TokenTransfer(
 			@RequestParam(name = "tokenId") Integer tokenId,
 			@RequestParam(name = "payPwd") String payPwd,

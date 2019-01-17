@@ -27,9 +27,9 @@ public class EthJobsWorker {
 	}
 	@StreamListener(value=WorkerMessage.REFRESH_JOB_INPUT)
 	@SendTo(value=WorkerMessage.REFRESH_JOB_CALLBACK_OUTPUT)
-	public Object refreshJob(Object param,@Header(name="jobType")int jobType,@Header(name="env")String env) {
+	public Object refreshJob(Object param,@Header(name="jobType")int jobType,@Header(name="envs")String envs) {
 		if(jobType == AppConstants.JOB_TYPE_REFRESH_ACCOUNT)
-			return this.ethService.refreshEthBalance((EthereumAccount)param,env);
+			return this.ethService.refreshEthBalance((EthereumAccount)param,envs);
 		else if(jobType == AppConstants.JOB_TYPE_REFRESH_TOKEN)
 			return this.ethService.refreshTokenBalance((Token)param);
 		else

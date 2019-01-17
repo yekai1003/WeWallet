@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
 import net.wzero.wewallet.domain.MemberInfo;
+import net.wzero.wewallet.domain.SessionData;
 import net.wzero.wewallet.gateway.domain.Member;
 import net.wzero.wewallet.gateway.domain.MemberWechat;
 import net.wzero.wewallet.gateway.serv.MemberSessionService;
@@ -104,19 +105,37 @@ public class UserController extends BaseController {
 	 * 保存到 member mData里，下次启动加载配置到session
 	 * @return
 	 */
-	@RequestMapping("/setCurrEnv")
+	@RequestMapping("/setEnv")
 	public OkResponse setCurrEnv(@RequestParam(name="env") String envName) {
-		EthEnv env = EthEnv.valueOf(envName);
-		this.sessionDataService.update(super.getSessionData(), env); // 保存到缓存
-		
-		Member member = this.userService.findByMemberId(this.getMember().getId());
-		if(member.getmData() == null)
-			member.setmData(new HashMap<>());
-		member.getmData().put(AppConstants.ETH_ENV_KEY, env.getName());
-		this.userService.updateMember(member);
+		this._setEnv(envName);
 		return new OkResponse();
 	}
-	
+	@RequestMapping("/currEnv")
+	public EthEnv currEnv() {
+		SessionData sd = this.getSessionData();
+		if(sd.getMember().getCurrEnv() == null) {
+			this._setEnv(AppConstants.EthEnv.MAINNET.getName());
+			return EthEnv.MAINNET;
+		}else {
+			return EthEnv.fromString(sd.getMember().getCurrEnv());
+		}
+	}
+	private void _setEnv(String envStr) {
+		try {
+			EthEnv env = EthEnv.fromString(envStr);
+			this.sessionDataService.update(super.getSessionData(), env); // 保存到缓存
+			
+			// 保存到 member
+			Member member = this.userService.findByMemberId(this.getMember().getId());
+			if(member.getmData() == null)
+				member.setmData(new HashMap<>());
+			member.getmData().put(AppConstants.ETH_ENV_KEY, env.getName());
+			this.userService.updateMember(member);
+		}catch(java.lang.IllegalArgumentException ex) {
+			ex.printStackTrace();
+			throw new WalletException("env_not_found","指定的环境找不到");
+		}
+	}
 	/**
 	 * 修改指定member的信息（修改后没有对该member的token进行）
 	 * @param memberId

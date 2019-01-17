@@ -49,7 +49,7 @@ public class TestAction {
 
 	@Test
 	public void doAction2() throws IOException {
-		Web3j web3 = Web3j.build(new HttpService(AppConstants.POPSTEN));
+		Web3j web3 = Web3j.build(new HttpService(AppConstants.ROPSTEN));
 		Web3ClientVersion web3ClientVersion = web3.web3ClientVersion().send();
 		System.out.println(web3ClientVersion.getWeb3ClientVersion());
 	}
@@ -104,7 +104,7 @@ public class TestAction {
 		// 定义个发送量
 		BigInteger value = Convert.toWei("0.05", Convert.Unit.ETHER).toBigInteger();
 		// 创建web3j对象
-		Web3j web3j = Web3j.build(new HttpService(AppConstants.POPSTEN));
+		Web3j web3j = Web3j.build(new HttpService(AppConstants.ROPSTEN));
 		// 获取一个发送账户的 有效nonce
 		EthGetTransactionCount ethGetTransactionCount = web3j
 				.ethGetTransactionCount(senderAddress, DefaultBlockParameterName.LATEST).sendAsync().get();
@@ -151,7 +151,7 @@ public class TestAction {
 		// 定义个发送量 这里不需要BigInteger 就可以 这里是转换前的值，因此不需要先转成 wei，否则余额不够，闹腾了一早上
 		BigDecimal value = BigDecimal.valueOf(0.03);// Convert.toWei("0.03", Convert.Unit.ETHER);
 		// 创建web3j对象
-		Web3j web3j = Web3j.build(new HttpService(AppConstants.POPSTEN));
+		Web3j web3j = Web3j.build(new HttpService(AppConstants.ROPSTEN));
 		// 获取认证信息
 		Credentials credentials = createCredentials(keystore, "123");
 		TransactionReceipt transactionReceipt = Transfer
@@ -169,7 +169,7 @@ public class TestAction {
 	public void doAction6() throws IOException {
 		String txHash = "0xa7530405d6e25ab92634ab22ead8421e34f2bc89d2e6fd8e8c28d48c853b5802";// "0x02ea84431cac0a2819c263a274b5ae4f4f511509e82746bb4aa40aeaee48d15e";
 		// 创建web3j对象
-		Web3j web3j = Web3j.build(new HttpService(AppConstants.POPSTEN));
+		Web3j web3j = Web3j.build(new HttpService(AppConstants.ROPSTEN));
 
 		EthGetTransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(txHash).send();
 
@@ -193,25 +193,31 @@ public class TestAction {
 	@Test
 	public void doAction8() throws IOException {
 		// 创建web3j对象
-		Web3j web3j = Web3j.build(new HttpService(AppConstants.POPSTEN));
+		Web3j web3j = Web3j.build(new HttpService(AppConstants.PINKEBY));
 		//DefaultBlockParameter
 		EthGetBalance ethGetBalance = web3j.ethGetBalance("0xa527c6Faf3eD312EA20E9fDC680aCaBF32d42740", DefaultBlockParameter.valueOf("latest")).send();
 		System.out.println(ethGetBalance.getResult());
-//		System.out.println(Integer.parseInt(ethGetBalance.getResult().substring(2), 16));
+		System.out.println(ethGetBalance.getBalance().toString(10));
+		System.out.println(Integer.parseInt(ethGetBalance.getResult().substring(2), 16));
 //		System.out.println(Long.parseLong(ethGetBalance.getResult().substring(2), 16));
-		BigInteger balance = new BigInteger(ethGetBalance.getResult(),16);
-		System.out.println(balance.toString(10));
+//		BigInteger balance = new BigInteger(ethGetBalance.getResult(),16);
+//		System.out.println(balance.toString(10));
 		
 	}
 	@Test
 	public void doAction9() {
 		EthEnv envStr = EthEnv.fromString("123");
 		System.out.println(envStr);
-	}
-	@Test
-	public void doAction10() {
 		String value = "1.0";
 		BigDecimal val = Convert.toWei(new BigDecimal(value), Convert.Unit.fromString("ether"));
 		System.out.println(val.toBigInteger().toString());
+	}
+	@Test
+	public void doAction10() {
+		String tmp = "a|b|c|d";
+		String[] tmps = tmp.split("\\|");
+		for (int i = 0; i < tmps.length; i++) {
+			System.out.println(tmps[i]);
+		}
 	}
 }

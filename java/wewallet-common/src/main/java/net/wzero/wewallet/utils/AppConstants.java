@@ -39,7 +39,7 @@ public final class AppConstants {
 	/** 
 	 * Ropsten Test Network
 	 */
-	public static final String POPSTEN = "https://ropsten.infura.io/v3/3cef33da8db74456945739de85d48457";
+	public static final String ROPSTEN = "https://ropsten.infura.io/v3/3cef33da8db74456945739de85d48457";
 	/**
 	 * Kovan Test Network
 	 */
@@ -61,7 +61,7 @@ public final class AppConstants {
 		/** 
 		 * Ropsten Test Network
 		 */
-		POPSTEN("popsten","https://ropsten.infura.io/v3/3cef33da8db74456945739de85d48457"),
+		ROPSTEN("ropsten","https://ropsten.infura.io/v3/3cef33da8db74456945739de85d48457"),
 		/**
 		 * Kovan Test Network
 		 */
@@ -94,6 +94,13 @@ public final class AppConstants {
 		}
 		public static String getUrl(String name) {
 			return EthEnv.fromString(name).url;
+		}
+		public static String keys() {
+			String ret = "";
+			for (EthEnv env : EthEnv.values()) {
+                ret += env.getName()+"|";
+            }
+			return ret.substring(0,ret.length()-1);
 		}
 		public String getName() {
 			return name;

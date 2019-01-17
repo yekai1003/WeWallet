@@ -26,6 +26,7 @@ import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
@@ -46,6 +47,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
 import net.wzero.wewallet.core.domain.Account;
+import net.wzero.wewallet.core.domain.Balance;
 import net.wzero.wewallet.core.domain.EthereumAccount;
 import net.wzero.wewallet.core.domain.Token;
 import net.wzero.wewallet.core.domain.Transaction;
@@ -243,18 +245,24 @@ public class EthServiceImpl implements EthService,InitializingBean {
 	 * 带参数过来吧!
 	 */
 	@Override
-	public Account refreshEthBalance(EthereumAccount account,String env) {
-		Web3j web3 = ethEnvMap.get(env);
-		try {
-			EthGetBalance balance = web3.ethGetBalance(account.getAddr(), DefaultBlockParameterName.LATEST).send();
-			account.setBalance(balance.getBalance().toString(10));
-			account.setIsRefreshing(false);
-			return account;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new WalletException("io_exception",e.getMessage());
+	public Account refreshEthBalance(EthereumAccount account,String envs) {
+		String [] envArr = envs.split("\\|");
+		for (String env : envArr) {
+			log.info("--env:\t"+env);
+			Web3j web3 = ethEnvMap.get(env);
+//			web3.ethBlockNumber().send().getBlockNumber()|DefaultBlockParameter.valueOf("latest")
+			try {
+//				EthGetBalance balance = web3.ethGetBalance(account.getAddr(), new DefaultBlockParameterNumber(web3.ethBlockNumber().send().getBlockNumber())).send();
+				// 数据库里的地址是没有 0x 的
+				EthGetBalance balance = web3.ethGetBalance("0x"+account.getAddr(), DefaultBlockParameter.valueOf("latest")).send();
+				log.info("---result:"+balance.getResult());
+				log.info("---balance:"+balance.getBalance().toString(10));
+				account.getBalances().put(env, new Balance(balance.getBalance().toString(10),false));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		return account;
 	}
 
 	@Override

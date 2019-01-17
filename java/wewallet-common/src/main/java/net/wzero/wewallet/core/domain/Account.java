@@ -31,8 +31,6 @@ public class Account extends EntityBase {
 	//账户地址,方便其他业务，反正地址不可能推算出私钥
 	private String addr;
 	private String mark;
-	@Column(columnDefinition="tinyint(1) default 0")
-	private Boolean isRefreshing;
 	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
 	private Date created;
 	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", updatable = false)
@@ -85,11 +83,4 @@ public class Account extends EntityBase {
 	public void setUpdated(Date updated) {
 		this.updated = updated;
 	}
-	public Boolean getIsRefreshing() {
-		return isRefreshing;
-	}
-	public void setIsRefreshing(Boolean isRefreshing) {
-		this.isRefreshing = isRefreshing;
-	}
-	
 }

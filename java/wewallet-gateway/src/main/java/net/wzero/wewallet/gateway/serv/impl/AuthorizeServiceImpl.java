@@ -214,6 +214,7 @@ public class AuthorizeServiceImpl extends SysParamSupport implements AuthorizeSe
 		mi.setMark(member.getMark());
 		mi.setmData(member.getmData());
 		mi.setGroupId(member.getGroup().getId());
+		
 		// 如果存在 eth env
 		if(member.getmData() != null) {
 			if(member.getmData().containsKey(AppConstants.ETH_ENV_KEY)) {
