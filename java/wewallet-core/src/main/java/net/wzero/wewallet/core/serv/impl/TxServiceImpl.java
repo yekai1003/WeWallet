@@ -37,7 +37,7 @@ public class TxServiceImpl implements TxService {
 		// 获取账户信息
 		Account account = this.accountRepository.findOne(accountId);
 		// 判断 memberId 是否可以 account匹配
-		if(account.getMemberId() != memberId) throw new WalletException("session_error","本用户没有此账户！");
+		if(!account.getMemberId().equals(memberId)) throw new WalletException("session_error","本用户没有此账户！");
 		// 插入数据库
 		Transaction tx = new Transaction();
 		tx.setMemberId(memberId);

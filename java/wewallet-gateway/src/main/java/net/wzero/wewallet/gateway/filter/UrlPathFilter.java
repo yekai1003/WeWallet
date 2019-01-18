@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
+import org.springframework.stereotype.Component;
 
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -16,6 +17,7 @@ import net.wzero.wewallet.gateway.serv.OutAccessApiService;
 import net.wzero.wewallet.utils.AppConstants;
 
 @Slf4j
+@Component
 public class UrlPathFilter extends ZuulFilter {
 	@Autowired
 	private ApiService apiService;

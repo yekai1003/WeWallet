@@ -55,7 +55,7 @@ public class TxController extends BaseController {
 			@RequestParam(name = "payPwd") String payPwd,
 			@RequestParam(name = "toAddress") String toAddress,
 			@RequestParam(name = "value") String value,
-			@RequestParam(name = "unit") String unit,
+			@RequestParam(name = "unit",required=false,defaultValue="ether") String unit,
 			@RequestParam(name = "env",required=false) String env) {
 		
 		BigDecimal val = Convert.toWei(new BigDecimal(value), Convert.Unit.fromString(unit));
@@ -65,6 +65,11 @@ public class TxController extends BaseController {
 		if(env == null)
 			env = this.getMember().getCurrEnv();
 		if(env == null) throw new WalletException("env_not_set","选择当前钱包环境");
+		//对地址进行修改
+		if(toAddress.startsWith("0x")&&toAddress.length()==42)
+			toAddress = toAddress.substring(2);
+		else if(toAddress.length() != 40)
+			throw new WalletException("address_error","地址格式不对");
 		return this.txSerrvice.createTransaction(this.getMember().getId(), accountId, toAddress, val,EthEnv.fromString(env), payPwd);
 	}
 	/**

@@ -327,7 +327,7 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 		// 发送一个消息 到rabbitmq
 		this.coreMessage.refreshJob()
 				.send(MessageBuilder.withPayload(token).setHeader("jobType", AppConstants.JOB_TYPE_REFRESH_TOKEN)
-						/* .setHeader("env", token.getEnv()) */.build()); // 理论上 env header 不需要了
+						.setHeader("envs", token.getEnv()).build()); // 理论上 env header 不需要了,但是为了通用还是提供一个，也可以随便设置一个
 		return token;
 	}
 
