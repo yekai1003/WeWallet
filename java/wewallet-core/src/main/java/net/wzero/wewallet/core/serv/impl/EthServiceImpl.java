@@ -273,7 +273,7 @@ public class EthServiceImpl implements EthService,InitializingBean {
 		List<Type> inputParameters = new ArrayList<>();
 		List<TypeReference<?>> outputParameters = new ArrayList<>();
 		// 输入参数
-		Address address = new Address(token.getAccount().getAddr());
+		Address address = new Address("0x"+token.getAccount().getAddr());
 		inputParameters.add(address);
 		// 返回参数
 		TypeReference<Uint256> typeReference = new TypeReference<Uint256>() {};
@@ -282,8 +282,8 @@ public class EthServiceImpl implements EthService,InitializingBean {
 		String data = FunctionEncoder.encode(function);
 		org.web3j.protocol.core.methods.request.Transaction transaction 
 				= org.web3j.protocol.core.methods.request.Transaction.createEthCallTransaction(
-						token.getAccount().getAddr(), 
-						token.getContractAddr(),
+						"0x"+token.getAccount().getAddr(), // 这里的地址 是否也需要 0x 开头？
+						"0x"+token.getContractAddr(),
 						data);
 		
 		try {

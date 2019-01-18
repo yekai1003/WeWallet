@@ -238,7 +238,7 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 	}
 
 	private Account refreshAcct(Integer memberId, Integer accountId, String envs) {
-		// 判断环境是否已经配置
+		log.info("---envs:"+envs);
 		// 获取账户
 		EthereumAccount account = (EthereumAccount) this.accountRepository.findOne(accountId);
 		if (account == null)
@@ -247,6 +247,7 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 			throw new WalletException("op_failed", "只能操作本账户下的账户");
 		String[] envArr = envs.split("\\|");
 		for (String env : envArr) {
+			log.info("---env:"+env);
 			if (!account.getBalances().containsKey(env)) {
 				account.getBalances().put(env, new Balance("0", false));
 			}
@@ -266,8 +267,10 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 		Account account = this.accountRepository.findOne(accountId);
 		if (account == null)
 			throw new WalletException("account_not_exist", "指定的AccountID不存在");
-		if (account.getMemberId() != memberId)
-			throw new WalletException("session_error", "本账户不包含此账户");
+		log.info("---memberId:\t"+memberId);
+		log.info("---account.memberId:\t"+account.getMemberId());
+		if (!account.getMemberId().equals(memberId))
+			throw new WalletException("session_error", "本账户不包含此账号");
 		// 看下token是否存在
 		Token token = this.tokenRepository.findByAccountIdAndContractAddrAndEnv(accountId, contractAddr, env.getName());
 		if (token != null)
@@ -282,7 +285,11 @@ public class EthereumWalletServiceImpl extends SysParamSupport implements Wallet
 		token.setName(name);
 		token.setSymbol(symbol);
 		token.setDecimals(decimals);
-		return this.tokenRepository.save(token);
+		token = this.tokenRepository.save(token);
+		// 发送刷新余额的消息
+		this.coreMessage.refreshJob().send(MessageBuilder.withPayload(token)
+				.setHeader("jobType", AppConstants.JOB_TYPE_REFRESH_TOKEN).setHeader("envs", env.getName()).build());
+		return token;
 	}
 
 	@Override

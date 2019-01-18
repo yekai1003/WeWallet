@@ -8,7 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
-import net.wzero.wewallet.domain.converter.KeyValueStringConverter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import net.wzero.wewallet.domain.converter.KeyBalanceConverter;
 
 @Entity
 @PrimaryKeyJoinColumn
@@ -19,11 +21,12 @@ public class EthereumAccount extends Account {
 	 * 不同环境不同的余额。。。
 	 */
 	@Column
-	@Convert(converter=KeyValueStringConverter.class)
+	@Convert(converter=KeyBalanceConverter.class)
 	private Map<String,Balance> balances;
 	/**
 	 * 以太坊 使用keystore存储
 	 */
+	@JsonIgnore
 	@Column(columnDefinition="text")
 	private String keystore;
 
@@ -39,5 +42,4 @@ public class EthereumAccount extends Account {
 	public void setKeystore(String keystore) {
 		this.keystore = keystore;
 	}
-	
 }

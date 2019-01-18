@@ -3,9 +3,18 @@ package net.wzero.wewallet.core;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.FunctionReturnDecoder;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
@@ -15,6 +24,7 @@ import org.web3j.crypto.WalletFile;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
@@ -32,6 +42,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.wzero.wewallet.WalletException;
 import net.wzero.wewallet.core.domain.AccountType;
 import net.wzero.wewallet.utils.AppConstants;
 import net.wzero.wewallet.utils.AppConstants.EthEnv;
@@ -206,11 +217,11 @@ public class TestAction {
 	}
 	@Test
 	public void doAction9() {
-		EthEnv envStr = EthEnv.fromString("123");
+		EthEnv envStr = EthEnv.fromString("ropsten");
 		System.out.println(envStr);
-		String value = "1.0";
-		BigDecimal val = Convert.toWei(new BigDecimal(value), Convert.Unit.fromString("ether"));
-		System.out.println(val.toBigInteger().toString());
+//		String value = "1.0";
+//		BigDecimal val = Convert.toWei(new BigDecimal(value), Convert.Unit.fromString("ether"));
+//		System.out.println(val.toBigInteger().toString());
 	}
 	@Test
 	public void doAction10() {
@@ -218,6 +229,44 @@ public class TestAction {
 		String[] tmps = tmp.split("\\|");
 		for (int i = 0; i < tmps.length; i++) {
 			System.out.println(tmps[i]);
+		}
+	}
+	@Test
+	public void doAction11() {
+		Web3j web3j = Web3j.build(new HttpService(AppConstants.ROPSTEN));
+		String acctAddress = "C1F741b993F8715468b5e7c3B3ff62541aF7A578";
+		String contractAddress = "0xa82927975eAA40a9E6EB9BF42C946Df637267CDB";
+		String methodName = "balanceOf";
+		@SuppressWarnings("rawtypes")
+		List<Type> inputParameters = new ArrayList<>();
+		List<TypeReference<?>> outputParameters = new ArrayList<>();
+		// 输入参数
+		Address address = new Address(acctAddress);
+		inputParameters.add(address);
+		// 返回参数
+		TypeReference<Uint256> typeReference = new TypeReference<Uint256>() {};
+		outputParameters.add(typeReference);
+		Function function = new Function(methodName,inputParameters,outputParameters);
+		String data = FunctionEncoder.encode(function);
+		org.web3j.protocol.core.methods.request.Transaction transaction 
+				= org.web3j.protocol.core.methods.request.Transaction.createEthCallTransaction(
+						acctAddress, // 这里的地址 是否也需要 0x 开头？
+						contractAddress,
+						data);
+		
+		try {
+			EthCall ethCall = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).sendAsync().get();
+			@SuppressWarnings("rawtypes")
+			List<Type> results = FunctionReturnDecoder.decode(ethCall.getValue(), function.getOutputParameters());
+			System.out.println(results.get(0).getValue().toString());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("op_failed",e.getMessage());
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new WalletException("op_failed",e.getMessage());
 		}
 	}
 }

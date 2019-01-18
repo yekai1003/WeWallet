@@ -21,7 +21,13 @@ public class TokenController extends BaseController {
 	private WalletService walletService;
 	@Autowired
 	private TokenRepository tokenRepository;
-	
+
+	@RequestMapping("/get")
+	public Token get(@RequestParam(name="id")Integer tokenId) {
+		Token token = this.tokenRepository.findOne(tokenId);
+		if(token == null) throw new WalletException("id_not_exist","ID不存在");
+		return token;
+	}
 	/**
 	 * 添加一个token
 	 * token是基于账户的，因为token也需要一个地址
@@ -38,9 +44,9 @@ public class TokenController extends BaseController {
 			@RequestParam(name="standard",required=false,defaultValue="erc20")String standard,
 			@RequestParam(name="icon",required=false)String icon,
 			@RequestParam(name="name",required=false)String name,
-			@RequestParam(name="symbol",required=false)String symbol,
+			@RequestParam(name="tokenSymbol",required=false)String symbol,// symbol关键字 js上
 			@RequestParam(name="decimals",required=false, defaultValue="0")Integer decimals) {
-		EthEnv env = EthEnv.valueOf(envStr);
+		EthEnv env = EthEnv.fromString(envStr);
 		decimals = decimals & 0x00ff;
 		return this.walletService.addToken(this.getMember().getId(), accountId,env, contractAddr, standard, icon, name, symbol, decimals);
 	}
