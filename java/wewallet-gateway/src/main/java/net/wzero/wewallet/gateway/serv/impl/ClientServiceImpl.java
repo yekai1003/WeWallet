@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import net.wzero.wewallet.gateway.domain.Client;
+import net.wzero.wewallet.gateway.repo.ClientRepository;
 import net.wzero.wewallet.gateway.serv.ClientService;
 
 @Service("clientService")
@@ -18,9 +18,11 @@ public class ClientServiceImpl implements ClientService,InitializingBean {
 	private static Logger log = LoggerFactory.getLogger(ClientServiceImpl.class);
 	
 	private static List<Client> clientList;
-
+//
+//	@Autowired
+//	private RestTemplate restTemplate;
 	@Autowired
-	private RestTemplate restTemplate;
+	private ClientRepository clientRepository;
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// TODO Auto-generated method stub
@@ -30,8 +32,8 @@ public class ClientServiceImpl implements ClientService,InitializingBean {
 	public void initClient() {
 		clientList = new ArrayList<Client>();
 		
-		Client[] clients = this.restTemplate.getForObject("http://shrey-core/client/list", Client[].class);
-		log.info("Client Count :\t"+clients.length);
+		List<Client> clients = this.clientRepository.findAll(); //this.restTemplate.getForObject("http://shrey-core/client/list", Client[].class);
+		log.info("Client Count :\t"+clients.size());
 		for(Client c : clients) {
 			log.info("---client init:"+c.getClientName());
 			clientList.add(c);
