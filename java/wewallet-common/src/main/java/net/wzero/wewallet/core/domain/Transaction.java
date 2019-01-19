@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import net.wzero.wewallet.domain.EntityBase;
@@ -16,8 +18,9 @@ public class Transaction extends EntityBase {
 	@Id
 	@GeneratedValue
 	private Integer id;
-	
-	private Integer memberId;
+	@JoinColumn(name="account_id")
+	@ManyToOne
+	private Account account;
 	private String txHash; 
 	private String status;
 	private String gasLimit;
@@ -47,11 +50,11 @@ public class Transaction extends EntityBase {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public Integer getMemberId() {
-		return memberId;
+	public Account getAccount() {
+		return account;
 	}
-	public void setMemberId(Integer memberId) {
-		this.memberId = memberId;
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 	public String getTxHash() {
 		return txHash;
