@@ -5,6 +5,7 @@ import java.util.Date;
 public class TransactionQuery {
 
 	private Integer memberId;
+	private Integer accountId;
 	private String stauts;
 	private Date begin;
 	private Date end;
@@ -14,6 +15,12 @@ public class TransactionQuery {
 	}
 	public void setMemberId(Integer memberId) {
 		this.memberId = memberId;
+	}
+	public Integer getAccountId() {
+		return accountId;
+	}
+	public void setAccountId(Integer accountId) {
+		this.accountId = accountId;
 	}
 	public String getStauts() {
 		return stauts;

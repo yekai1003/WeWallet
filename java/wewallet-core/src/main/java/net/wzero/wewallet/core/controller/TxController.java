@@ -117,11 +117,13 @@ public class TxController extends BaseController {
 	public Page<Transaction> list(
 			@RequestParam(name="page", defaultValue="0") Integer page,
 			@RequestParam(name="size", defaultValue="20", required=false) Integer size,
+			@RequestParam(name="accountId", required=false) Integer accountId,
 			@RequestParam(name = "begin", required=false) Date begin,
 			@RequestParam(name = "end", required=false) Date end,
 			@RequestParam(name="status", required=false) String status) {
 		TransactionQuery transactionQuery = new TransactionQuery();
 		transactionQuery.setMemberId(this.getMember().getId());
+		if(accountId != null) transactionQuery.setAccountId(accountId);
 		if(status != null) transactionQuery.setStauts(status);
 		if(begin != null && end != null)
 			if(begin.compareTo(end) > 0) throw new WalletException("params_error","开始时间不能大于结束时间");

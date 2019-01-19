@@ -37,7 +37,10 @@ public class TransactionQueryServiceImpl implements TransactionQueryService {
             public Predicate toPredicate(Root<Transaction> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<Predicate>();
                 if (transactionQuery.getMemberId() != null){
-                	list.add(criteriaBuilder.equal(root.get("memberId").as(Integer.class), transactionQuery.getMemberId()));
+                	list.add(criteriaBuilder.equal(root.get("account").get("memberId").as(Integer.class), transactionQuery.getMemberId()));
+                }
+                if (transactionQuery.getAccountId() != null){
+                	list.add(criteriaBuilder.equal(root.get("account").get("id").as(Integer.class), transactionQuery.getAccountId()));
                 }
                 if (transactionQuery.getStauts() != null){
                 	list.add(criteriaBuilder.equal(root.get("status").as(String.class), transactionQuery.getStauts()));
