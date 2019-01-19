@@ -40,7 +40,7 @@ public class TxServiceImpl implements TxService {
 		if(!account.getMemberId().equals(memberId)) throw new WalletException("session_error","本用户没有此账户！");
 		// 插入数据库
 		Transaction tx = new Transaction();
-		tx.setMemberId(memberId);
+		tx.setAccount(account);
 		tx.setEnv(env.getName());
 		tx.setStatus("-1");
 		tx.setFromAddr(account.getAddr());//还不知道 addr的格式 是否以0x 开头
@@ -60,11 +60,11 @@ public class TxServiceImpl implements TxService {
 		//获取token信息
 		Token token = this.tokenRepository.findOne(tokenId);
 		// 判断 memberId 是否可以 account匹配
-		if(token.getAccount().getMemberId() != memberId) throw new WalletException("session_error","本用户没有此账户！");
+		if(!token.getAccount().getMemberId().equals(memberId)) throw new WalletException("session_error","本用户没有此账户！");
 		// 插入数据库
 		Transaction tx = new Transaction();
 		tx.setContractAddr(token.getContractAddr());
-		tx.setMemberId(memberId);
+		tx.setAccount(token.getAccount());
 		tx.setEnv(env.getName());
 		tx.setStatus("-1");
 		tx.setFromAddr(token.getAccount().getAddr());

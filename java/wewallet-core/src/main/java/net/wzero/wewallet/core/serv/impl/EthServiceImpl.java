@@ -78,7 +78,7 @@ public class EthServiceImpl implements EthService,InitializingBean {
 	@Override
 	public Transaction sendTransaction(Transaction transaction, String pwd) {
 		// ether 的发送交易，这里获取 account 对象的方式不对，后期需要通过restTemplate 获取
-		EthereumAccount account = (EthereumAccount)this.accountRepository.findByMemberIdAndAddr(transaction.getMemberId(), transaction.getFromAddr());
+		EthereumAccount account = (EthereumAccount)this.accountRepository.findByMemberIdAndAddr(transaction.getAccount().getMemberId(), transaction.getFromAddr());
 		try {
 			ECKeyPair kp = KeystoreUtils.readKeystore(account.getKeystore(), pwd);
 			// 获取认证信息
@@ -130,7 +130,7 @@ public class EthServiceImpl implements EthService,InitializingBean {
 	@Override
 	public Transaction sendTokenTransaction(Transaction transaction, String pwd) {
 		// Token 交易的发送,这里获取 account 对象的方式不对，后期需要通过restTemplate 获取
-		EthereumAccount account = (EthereumAccount)this.accountRepository.findByMemberIdAndAddr(transaction.getMemberId(), transaction.getFromAddr());
+		EthereumAccount account = (EthereumAccount)this.accountRepository.findByMemberIdAndAddr(transaction.getAccount().getMemberId(), transaction.getFromAddr());
 		try {
 			ECKeyPair kp = KeystoreUtils.readKeystore(account.getKeystore(), pwd);
 			// 获取认证信息

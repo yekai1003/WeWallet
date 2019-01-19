@@ -136,7 +136,7 @@ public class TxController extends BaseController {
 		Transaction tmp = this.transactionRepository.findOne(id);
 		if(tmp == null) throw new WalletException("id_not_exist","交易ID不存在");
 		// 检查操作者是否是自己
-		if(this.getMember().getId() != tmp.getMemberId())
+		if(!tmp.getAccount().getMemberId().equals(this.getMember().getId()))
 			throw new WalletException("op_failed","不能操作别人的交易");
 		// 异步完成
 		this.txSerrvice.refreshTransaction(tmp);
