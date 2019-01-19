@@ -25,7 +25,7 @@ import net.wzero.wewallet.utils.AppConstants.EthEnv;
 public class TxController extends BaseController {
 
 	@Autowired
-	private TxService txSerrvice;
+	private TxService txService;
 	@Autowired
 	private TransactionQueryService transactionQueryService;
 	@Autowired
@@ -70,7 +70,7 @@ public class TxController extends BaseController {
 			toAddress = toAddress.substring(2);
 		else if(toAddress.length() != 40)
 			throw new WalletException("address_error","地址格式不对");
-		return this.txSerrvice.createTransaction(this.getMember().getId(), accountId, toAddress, val,EthEnv.fromString(env), payPwd);
+		return this.txService.createTransaction(this.getMember().getId(), accountId, toAddress, val,EthEnv.fromString(env), payPwd);
 	}
 	/**
 	 * 
@@ -99,7 +99,12 @@ public class TxController extends BaseController {
 		if(env == null)
 			env = this.getMember().getCurrEnv();
 		if(env == null) throw new WalletException("env_not_set","选择当前钱包环境");
-		return this.txSerrvice.createTokenTransaction(this.getMember().getId(), tokenId, toAddress, val, EthEnv.fromString(env), payPwd);
+		//对地址进行修改
+		if(toAddress.startsWith("0x")&&toAddress.length()==42)
+			toAddress = toAddress.substring(2);
+		else if(toAddress.length() != 40)
+			throw new WalletException("address_error","地址格式不对");
+		return this.txService.createTokenTransaction(this.getMember().getId(), tokenId, toAddress, val, EthEnv.fromString(env), payPwd);
 	}
 	@RequestMapping("/get")
 	public Transaction get(@RequestParam(name = "id") Integer id) {
@@ -139,7 +144,7 @@ public class TxController extends BaseController {
 		if(!tmp.getAccount().getMemberId().equals(this.getMember().getId()))
 			throw new WalletException("op_failed","不能操作别人的交易");
 		// 异步完成
-		this.txSerrvice.refreshTransaction(tmp);
+		this.txService.refreshTransaction(tmp);
 		return new OkResponse();
 	}
 }
