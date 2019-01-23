@@ -21,7 +21,7 @@ public class EthTransferWorker {
 	@StreamListener(WorkerMessage.TRANSFER_JOB_INPUT)
 	@SendTo(WorkerMessage.TRANSFER_JOB_CALLBACK_OUTPUT)
 	public Transaction doWork(Transaction msg,@Header(name="p1")String pwd) {
-		log.info("收到交易请求："+msg.getId()+"\t to:"+msg.getToAddr());
+		log.info("--2--recv job txId ："+msg.getId()+"\ttxHash:"+msg.getTxHash()+"\t to:"+msg.getToAddr());
 		//区分 ether 还是 token 交易
 		if(msg.getContractAddr() == null)
 			return this.ethService.sendTransaction(msg,pwd);

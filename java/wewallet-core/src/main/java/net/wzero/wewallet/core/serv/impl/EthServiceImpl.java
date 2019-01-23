@@ -129,6 +129,7 @@ public class EthServiceImpl implements EthService,InitializingBean {
 	
 	@Override
 	public Transaction sendTokenTransaction(Transaction transaction, String pwd) {
+		log.info("--3-- send token txId:"+transaction.getId()+"\t txHash:"+transaction.getTxHash());
 		// Token 交易的发送,这里获取 account 对象的方式不对，后期需要通过restTemplate 获取
 		EthereumAccount account = (EthereumAccount)this.accountRepository.findByMemberIdAndAddr(transaction.getAccount().getMemberId(), transaction.getFromAddr());
 		try {
@@ -174,6 +175,7 @@ public class EthServiceImpl implements EthService,InitializingBean {
 			log.info("txHash->\t"+ethSendTransaction.getTransactionHash());
 			// 会提示有错误，但是交易却能成功，一次这里不抛出异常，除非 txHash 没有才异常,我估计这个方法会查询 交易状态，但是这个时候交易状态还没完成
 			if(ethSendTransaction.hasError()) {
+				log.info("has error:"+ethSendTransaction.getError().getMessage());
 				//throw new WalletException("send_transaction_failed",ethSendTransaction.getError().getMessage());
 				// 如果有错误 看下是否有txHash
 				if(ethSendTransaction.getTransactionHash() != null) {// 保存下交易 txHash
@@ -185,20 +187,26 @@ public class EthServiceImpl implements EthService,InitializingBean {
 					return transaction;
 				}
 			}else {//没有错误再去查询
+				log.info("no error");
 				transaction.setNonce(nonce.longValue());
 				// 获取 交易hash ,这个交易最好保存，方便后期查询 状态
 				String txHash = ethSendTransaction.getTransactionHash();
-				// 这里只更新下 txHash ，获取交易结果
-				EthGetTransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(txHash).send();
+				// 这里只更新下 txHash ，获取交易结果 
+				// 交易结果获取不到
+//				EthGetTransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(txHash).send();
 				transaction.setTxHash(txHash);
 				// 如果没有错误 保存详细数据，有错误忽略掉
-				if(!transactionReceipt.hasError()) {
-					transaction.setStatus(new BigInteger(transactionReceipt.getResult().getStatus().substring(2),16).toString(10));
-					transaction.setGasLimit(DefaultGasProvider.GAS_LIMIT+"");
-					transaction.setGasPrice(DefaultGasProvider.GAS_PRICE+"");
-					transaction.setGasUsed(transactionReceipt.getResult().getGasUsed()+"");
-					transaction.setCumulativeGasUsed(transactionReceipt.getResult().getCumulativeGasUsed()+"");
-				}
+//				if(!transactionReceipt.hasError()) {
+//					log.info(transactionReceipt.getJsonrpc());
+//					log.info(transactionReceipt.getRawResponse());
+//					
+//					transaction.setStatus(new BigInteger(transactionReceipt.getResult().getStatus().substring(2),16).toString(10));
+//					transaction.setGasLimit(DefaultGasProvider.GAS_LIMIT+"");
+//					transaction.setGasPrice(DefaultGasProvider.GAS_PRICE+"");
+//					transaction.setGasUsed(transactionReceipt.getResult().getGasUsed()+"");
+//					transaction.setCumulativeGasUsed(transactionReceipt.getResult().getCumulativeGasUsed()+"");
+//				}
+				log.info("--3-2 txHash:"+transaction.getTxHash());
 				return transaction;
 			}
 		}  catch (JsonParseException e) {
@@ -225,7 +233,10 @@ public class EthServiceImpl implements EthService,InitializingBean {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new WalletException("send_transaction_failed","ExecutionException:\t"+e.getMessage());
-		} 
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw new WalletException("send_transaction_failed","ExecutionException:\t"+e.getMessage());
+		}
 	}
 
 
@@ -236,22 +247,35 @@ public class EthServiceImpl implements EthService,InitializingBean {
 //		EthereumAccount account = (EthereumAccount)this.accountRepository.findByMemberIdAndAddr(transaction.getMemberId(), transaction.getFromAddr());
 		// 通过交易的 环境获取 客户端实例
 		Web3j web3j = ethEnvMap.get(transaction.getEnv());
-
-		try {
-			EthGetTransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(transaction.getTxHash()).send();
-			log.info("transactionHash->\t" + transactionReceipt.getResult().getTransactionHash());
-			
-			// transaction.setTxHash(transactionReceipt.getResult().getTransactionHash()); // 通过交易txHash查询，回来不应该重新设置
-			transaction.setStatus(new BigInteger(transactionReceipt.getResult().getStatus().substring(2),16).toString(10));
-			transaction.setGasLimit(DefaultGasProvider.GAS_LIMIT+"");
-			transaction.setGasPrice(DefaultGasProvider.GAS_PRICE+"");
-			transaction.setGasUsed(transactionReceipt.getResult().getGasUsed()+"");
-			transaction.setCumulativeGasUsed(transactionReceipt.getResult().getCumulativeGasUsed()+"");
-			return transaction;
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new WalletException("get_transaction_failed","应该是网络异常!");
+		// 交易可能还没结果，循环查询，5次作为极限，不能一直查
+		for(int i=0;i<5;i++) {
+			log.info("--8--do["+i+"] refresh tx job txId:"+transaction.getId()+"\t txHash:"+transaction.getTxHash());
+			try {
+				// 开始前，停 15秒
+				Thread.sleep(15000l);
+				EthGetTransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(transaction.getTxHash()).send();
+				if(transactionReceipt.hasError()) continue;
+				if(transactionReceipt.getResult() == null) continue;
+				
+				log.info("transactionHash->\t" + transactionReceipt.getResult().getTransactionHash());
+				
+				// transaction.setTxHash(transactionReceipt.getResult().getTransactionHash()); // 通过交易txHash查询，回来不应该重新设置
+				transaction.setStatus(new BigInteger(transactionReceipt.getResult().getStatus().substring(2),16).toString(10));
+				transaction.setGasLimit(DefaultGasProvider.GAS_LIMIT+"");
+				transaction.setGasPrice(DefaultGasProvider.GAS_PRICE+"");
+				transaction.setGasUsed(transactionReceipt.getResult().getGasUsed()+"");
+				transaction.setCumulativeGasUsed(transactionReceipt.getResult().getCumulativeGasUsed()+"");
+				return transaction;
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new WalletException("get_transaction_failed","应该是网络异常!");
+			}catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				throw new WalletException("get_transaction_failed","同步锁异常!!");
+			}
 		}
+		return transaction;
 		
 	}
 

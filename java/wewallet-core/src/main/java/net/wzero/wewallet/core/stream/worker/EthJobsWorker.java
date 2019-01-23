@@ -6,6 +6,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
 import net.wzero.wewallet.core.domain.EthereumAccount;
 import net.wzero.wewallet.core.domain.Token;
@@ -14,6 +15,7 @@ import net.wzero.wewallet.core.serv.EthService;
 import net.wzero.wewallet.core.stream.WorkerMessage;
 import net.wzero.wewallet.utils.AppConstants;
 
+@Slf4j
 @Component
 public class EthJobsWorker {
 
@@ -23,6 +25,7 @@ public class EthJobsWorker {
 	@StreamListener(WorkerMessage.GET_TRANSACTION_RECEIPT_INPUT)
 	@SendTo(WorkerMessage.GET_TRANSACTION_RECEIPT_CALLBACK_OUTPUT)
 	public Transaction refreshTransaction(Transaction transaction) {
+		log.info("--7--recv refresh tx job txId:"+transaction.getId()+"\ttxHash:"+transaction.getTxHash());
 		return this.ethService.getTransactionReceipt(transaction);
 	}
 	@StreamListener(value=WorkerMessage.REFRESH_JOB_INPUT)

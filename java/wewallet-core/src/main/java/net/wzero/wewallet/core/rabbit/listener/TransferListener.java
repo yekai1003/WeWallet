@@ -21,10 +21,12 @@ public class TransferListener {
 	
 	@StreamListener(CoreMessage.TRANSFER_JOB_CALLBACK_INPUT)
 	public void transferCallbackWorker(Transaction transaction) {
-		log.info("transaction hash:\t"+transaction.getTxHash());
+		log.info("--4--callback txId:"+transaction.getId()+"\ttxHash:\t"+transaction.getTxHash());
 		this.transactionRepository.save(transaction);
 		// 当有 txHash 但是状态 还是 -1的时候 再次发个刷新的消息
-		if(transaction.getTxHash() != null && transaction.getStatus().equals("-1"))
+		if(transaction.getTxHash() != null && transaction.getStatus().equals("-1")) {
+			log.info("--5--refresh transaction:"+"\ttxHash:\t"+transaction.getTxHash());
 			this.txService.refreshTransaction(transaction);
+		}
 	}
 }

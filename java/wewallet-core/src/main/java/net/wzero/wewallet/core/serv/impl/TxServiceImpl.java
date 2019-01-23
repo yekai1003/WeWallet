@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import net.wzero.wewallet.WalletException;
 import net.wzero.wewallet.core.domain.Account;
 import net.wzero.wewallet.core.domain.Token;
@@ -18,6 +19,7 @@ import net.wzero.wewallet.core.serv.TxService;
 import net.wzero.wewallet.core.stream.CoreMessage;
 import net.wzero.wewallet.utils.AppConstants.EthEnv;
 
+@Slf4j
 @Service
 public class TxServiceImpl implements TxService {
 
@@ -72,6 +74,7 @@ public class TxServiceImpl implements TxService {
 		tx.setValue(value.toString());
 		tx = this.transactionRepository.save(tx);
 		// 发送 transafer 业务 消息 到RabbitMQ
+		log.info("--1--- send tx job ,txId:"+tx.getId()+"\t txHash:"+tx.getTxHash());
 		this.coreMessage.transferJob().send(MessageBuilder.withPayload(tx).setHeader("p1", pwd).build());
 		return tx;
 	}
@@ -81,6 +84,7 @@ public class TxServiceImpl implements TxService {
 		if(tx.getTxHash() == null)
 			throw new WalletException("tx_hash_empty","交易hash 值为空，一般交易还没广播成功");
 		// 查询交易不需要授权
+		log.info("--6-- send refresh txId:"+tx.getId()+"\ttxHash:"+tx.getTxHash());
 		this.coreMessage.getTransactionByHash().send(MessageBuilder.withPayload(tx).build());
 	}
 

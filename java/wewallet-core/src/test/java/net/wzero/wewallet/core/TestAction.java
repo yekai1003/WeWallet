@@ -178,7 +178,7 @@ public class TestAction {
 	 */
 	@Test
 	public void doAction6() throws IOException {
-		String txHash = "0xa7530405d6e25ab92634ab22ead8421e34f2bc89d2e6fd8e8c28d48c853b5802";// "0x02ea84431cac0a2819c263a274b5ae4f4f511509e82746bb4aa40aeaee48d15e";
+		String txHash = "0x7164b7abc40ca46e6b1c8ba4bf39b9d9fa29e2699a39687bff9aacd6f3d45538";// "0x02ea84431cac0a2819c263a274b5ae4f4f511509e82746bb4aa40aeaee48d15e";
 		// 创建web3j对象
 		Web3j web3j = Web3j.build(new HttpService(AppConstants.ROPSTEN));
 
