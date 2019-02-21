@@ -1,0 +1,10 @@
+<!--components/tab.wxml-->
+<view class="swiper-tab">
+    <view class="tab-scroll" animation="{{hAnimationData}}" bindtouchstart='hMoveStart' bindtouchend='hMoveEnd'>
+      <view class="swiper-tab-item {{currentTab==idx?'active':''}}" id="item-{{idx}}" data-current="{{idx}}" bindtap="clickTab" wx:for="{{tabs}}" wx:key="*this" wx:for-index="idx" wx:for-item="tab">{{tab}}</view>
+    </view>
+</view>
+<view animation="{{animationData}}" bindtouchstart='cMoveStart' bindtouchend='cMoveEnd'>
+  <slot>
+  </slot>
+</view>

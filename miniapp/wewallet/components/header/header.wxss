@@ -1,0 +1,49 @@
+/* components/header/header.wxss */
+.top-bar{
+  display: flex;
+  width: 100%;
+  justify-content:space-between;
+  align-items: center;
+  border-bottom: 1rpx solid #bbb;
+}
+.top-bar .logo{
+  margin: 4rpx;
+  width:90rpx;
+  height:90rpx;
+  border-radius: 45rpx;
+  background-color: #f8f8f8;
+}
+.top-bar .picker{
+  border: 6rpx solid #aed4ee;
+  height: 58rpx;
+  line-height: 58rpx;
+  width: 468rpx;
+  margin: 20rpx 10rpx;
+  border-radius: 32rpx;
+  text-align: center;
+}
+.top-bar .picker-gray{
+  color: #ccc;
+}
+.top-bar .btn-login{
+  margin: 4rpx;
+  width:90rpx;
+  height:90rpx;
+  background-color: #f0f0f0;
+  border-radius: 45rpx;
+}
+.top-bar .btn-login::after{
+  border:none;
+}
+.top-bar .btn-login .btn-img{
+  margin-top:18rpx;
+  width:48rpx;
+  height:60rpx;
+}
+.top-bar .userinfo-avatar{
+  width:90rpx;
+  height:90rpx;
+  margin: 4rpx;
+  border-radius: 45rpx;
+  background-color: #f0f0f0;
+}

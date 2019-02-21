@@ -1,0 +1,31 @@
+<!--pages/account/addToken.wxml-->
+<view class="container">
+  <header bindchanged="envChanged"></header>
+  <view class="add-box">
+    <tab>
+      <tab-item header="Custom Token">
+        <form class="form-box" bindsubmit="addSubmit">
+          <view class="section">
+            <view class="section-title">Token Address :</view>
+            <input name="tokenAddr" class="section-input" placeholder='Contract address'></input>
+          </view>
+          <view class="section">
+            <view class="section-title">Token Symbol :</view>
+            <input name="tokenSymbol" class="section-input" placeholder='token symbol'></input>
+          </view>
+          <view class="section">
+            <view class="section-title">Decimals of Precision :</view>
+            <input name="decimals" class="section-input" value="0" placeholder="Decimals of Precision"></input>
+          </view>
+          <view class="btn-area">
+            <button catchtap="cancelEvt">CANCEL</button>
+            <button type="primary" form-type="submit">IMPORT</button>
+          </view>
+        </form>
+      </tab-item>
+      <tab-item header="Search">
+        <text>Coming...</text>
+      </tab-item>
+    </tab>
+  </view>
+</view>

@@ -1,0 +1,17 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/send/send",
+    "pages/transactions/list",
+    "pages/account/new",
+    "pages/account/addToken",
+    "pages/account/edit",
+    "pages/test/index"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "EthWallet",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  }
+}

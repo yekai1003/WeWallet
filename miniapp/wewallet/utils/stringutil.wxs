@@ -1,0 +1,9 @@
+/* 缩短字符串，显示两头 */
+var formatShort = function(src, pn, an) {
+  // var ps = src.substr(0, pn)
+  // var as = src.substr(an)
+  return src.substring(0,pn) + '...'+src.substring(src.length-an,src.length)
+}
+module.exports = {
+  formatShort: formatShort
+}

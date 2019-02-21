@@ -1,0 +1,145 @@
+<!--pages/test/index.wxml-->
+<view class='container'>
+  <view class="top-bar">
+    <image src="/assets/wallet_logo.svg" class="logo" mode="cover"></image>
+    <view class="">
+      <image src="/assets/new_icon.svg" style="width:48rpx;height:48rpx;padding:18rpx;" bindtap="newRecordEvt"></image>
+    </view>
+    <view wx:if="{{!hasUserInfo && canIUse}}">
+      <button class="btn-login" open-type="getUserInfo" bindgetuserinfo="getUserInfo">
+        <image src="/assets/login.svg" class="btn-img"></image>
+      </button>
+    </view>
+    <block wx:else>
+      <image class="userinfo-avatar" bindtap='headerEvt' src="{{userInfo.avatarUrl}}" mode="cover"></image>
+    </block>
+  </view>
+  <!-- 记账控件 -->
+  <view class="record-box {{isRecording ? 'record-box-show':''}}">
+    <tab>
+      <tab-item header="支出">
+        <form class='form-box' bindsubmit="outSubmit">
+          <view class='section section-h'>
+            <view class='section-title'>
+              <image style="width:48rpx;height:48rpx;" src="/assets/time.svg"></image>
+            </view>
+            <view class='section-input' style="display:flex;flex-direction:row">
+              <picker name="d" mode="date" value="{{date}}" bindchange="dateChange">
+                <view>{{date}}</view>
+              </picker>
+              <picker name="t" mode="time" value="{{time}}" bindchange="timeChange" style="margin-left:18rpx">
+                <view>{{time}}</view>
+              </picker>
+            </view>
+          </view>
+          <view class='section section-h'>
+            <view class='section-title'>
+              <image style="width:48rpx;height:48rpx;" src="/assets/reason.svg"></image>
+            </view>
+            <input name="mark" class="section-input" value="{{mark}}" placeholder='事由'></input>
+          </view>
+          <view class='section section-h'>
+            <view class='section-title'>
+              <image style="width:48rpx;height:48rpx;" src="/assets/amounts.svg"></image>
+            </view>
+            <input name="amount" class="section-input" value="{{amount}}" type="digit" placeholder='金额'></input>
+          </view>
+          <view class='btn-area'>
+            <button class='btn' catchtap="cancelEvt">
+              <image class='btn-img' src="/assets/cancel-shield.svg"></image>
+            </button>
+            <button class="btn" type="primary" form-type="submit">
+              <image class='btn-img' src="/assets/record-icon.svg"></image>
+            </button>
+          </view>
+        </form>
+      </tab-item>
+      <tab-item header="收入">
+        <form class='form-box' bindsubmit="inSubmit">
+          <view class='section section-h'>
+            <view class='section-title'>
+              <image style="width:48rpx;height:48rpx;" src="/assets/time.svg"></image>
+            </view>
+            <view class='section-input' style="display:flex;flex-direction:row">
+              <picker name="d" mode="date" value="{{date}}">
+                <view>{{date}}</view>
+              </picker>
+              <picker name="t" mode="time" value="{{time}}" style="margin-left:18rpx">
+                <view>{{time}}</view>
+              </picker>
+            </view>
+          </view>
+          <view class='section section-h'>
+            <view class='section-title'>
+              <image style="width:48rpx;height:48rpx;" src="/assets/reason.svg"></image>
+            </view>
+            <input name="mark" class="section-input" value="{{mark}}" placeholder='事由'></input>
+          </view>
+          <view class='section section-h'>
+            <view class='section-title'>
+              <image style="width:48rpx;height:48rpx;" src="/assets/balance.svg"></image>
+            </view>
+            <input name="amount" class="section-input" value="{{amount}}" type="digit" placeholder='金额'></input>
+          </view>
+          <view class='btn-area'>
+            <button class='btn' catchtap="cancelEvt">
+              <image class='btn-img' src="/assets/cancel-shield.svg"></image>
+            </button>
+            <button class="btn" type="primary" form-type="submit">
+              <image class='btn-img' form-type="submit" src="/assets/record-icon.svg"></image>
+            </button>
+          </view>
+        </form>
+      </tab-item>
+    </tab>
+  </view>
+  <!-- 切换上个月下个月 -->
+  <view class="switch-bar">
+    <image wx:if="{{currMonth.hasPrev}}" src="/assets/prev-2.svg" catchtap='prevEvt'></image>
+    <image wx:else src="/assets/prev-1.svg"></image>
+    <view class="bar-title">{{currMonth.year}} - {{currMonth.month}}</view>
+    <image wx:if="{{currMonth.hasNext}}" src="/assets/next-2.svg" catchtap='nextEvt'></image>
+    <image wx:else src="/assets/next-1.svg"></image>
+  </view>
+  <!-- 当月  收支 情况 -->
+  <view class="info-box">
+    <view class="top">
+      <view class='m-box'>
+        <view class="m">{{currMonth.inM+currMonth.outM}}</view>
+        <view class="l">{{currMonth.month}}-月结余</view>
+      </view>
+    </view>
+    <view class="bottom">
+      <view class='m-box'>
+        <view class="m">{{currMonth.inM}}</view>
+        <view class="l">{{currMonth.month}}-月收入</view>
+      </view>
+      <view style="border:1rpx solid #888;width:0;height:auto;margin:28rpx auto;"></view>
+      <view class='m-box'>
+        <view class="m">{{-currMonth.outM}}</view>
+        <view class="l">{{currMonth.month}}-月支出</view>
+      </view>
+    </view>
+  </view>
+  <!-- 当日支出 -->
+  <view class="today-info">
+    <view wx:for-items="{{days}}" wx:key="{{item.d}}" class="m-list">
+      <view class='m-list-item'>
+        <!-- 标题栏 -->
+        <view id="{{item.d}}" class="m-list-item-hd {{item.open ? 'm-list-item-hd-show':''}}" bindtap="itemToggle">
+          <view>{{item.d}}</view>
+          <view>支出：<text style="color:#FF7F27">{{item.outM}}</text> 收入：<text style="color:#FF7F27">{{item.inM}}</text></view>
+        </view>
+        <!-- 内容栏 -->
+        <view class="m-list-item-bd {{item.open? 'm-list-item-bd-show':''}}">
+          <!-- 记账列表 -->
+          <view class="r-list-item {{item.open? 'r-list-item-show':''}}" wx:for="{{item.records}}" wx:for-item="record" wx:for-index="idx" wx:key="idx">
+            <view>{{record.mark}}</view>
+            <view style="color:#FF7F27">{{record.amount}}</view>
+            <view>{{record.time}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

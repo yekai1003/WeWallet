@@ -1,0 +1,21 @@
+/* components/tab.wxss */
+.swiper-tab{
+    width: 100%;
+    border-bottom: 2rpx solid #ccc;
+    overflow-x: hidden;
+}
+.swiper-tab .tab-scroll{
+    width:100%;
+    display: flex;
+    flex-flow: row;
+    text-align: center;
+}
+.swiper-tab-item{
+    padding: 14rpx 18rpx;
+    min-width:68px;
+    color:#434343;
+}
+.active{
+    color:#F65959;
+    border-bottom: 4rpx solid #F65959;
+}

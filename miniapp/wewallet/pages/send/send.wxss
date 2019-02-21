@@ -1,0 +1,53 @@
+/* pages/send/send.wxss */
+.acct-box{
+  display: flex;
+  flex-direction: row;
+  justify-content:space-between;
+  padding:8rpx 18rpx;
+  margin:8rpx 0;
+  background-color: #FFFFFF;
+  border-radius: 8rpx;
+}
+.balance-box{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #FFFFFF;
+  border-radius: 8rpx;
+  padding:8rpx 18rpx;
+  margin:8rpx 0;
+}
+.transfer-box {
+  display: flex;
+  flex-direction: column;
+  background-color: #FFFFFF;
+  border-radius: 8rpx;
+  padding:8rpx 18rpx;
+  margin:8rpx 0;
+}
+.transfer-box .section{
+  display:flex;
+  flex-direction: row;
+  padding: 18rpx 0;
+}
+.transfer-box .section .label{
+  width:25%;
+  font-size: 32rpx;
+}
+.transfer-box .section .input-box{
+  width:75%;
+  display:flex;
+  flex-direction: row;
+  justify-content:space-between;
+  border: 1rpx solid #ccc;
+  border-radius: 8rpx;
+  padding:18rpx 8rpx;
+  align-items: center;
+}
+.transfer-box .action-box{
+  display:flex;
+  flex-direction: row;
+  justify-content:space-between;
+  padding: 18rpx;
+  border-top: 1rpx solid #ccc;
+}

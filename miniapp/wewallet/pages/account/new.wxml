@@ -1,0 +1,68 @@
+<!--pages/account/new.wxml-->
+<view class="container">
+  <view style="font-size:48rpx;">New Account</view>
+  <view class="ctrl-box">
+    <tab>
+      <tab-item header="Create">
+        <form class="form-box" bindsubmit="createSubmit">
+          <view class="section">
+            <view class="section-title">Account Name :</view>
+            <input name="acctName" class="section-input" placeholder='a name for account'></input>
+          </view>
+          <view class="section">
+            <view class="section-title">password:</view>
+            <input class="section-input" type='password' name="pwd" placeholder="password for keystore"></input>
+          </view>
+          <view class="btn-area">
+            <button catchtap="cancelEvt">CANCEL</button>
+            <button type="primary" form-type="submit">CREATE</button>
+          </view>
+        </form>
+      </tab-item>
+      <tab-item header="Import">
+        <form class="form-box" bindsubmit="importSubmit">
+          <view class="section section-h">
+            <view class="section-title">Select Type:</view>
+            <picker name="imoprtType" bindchange="importTypeEvt" value="{{importType}}" range="{{importTypes}}">
+              <view class="picker">{{importTypes[importType]}}</view>
+            </picker>
+          </view>
+          <view class="section">
+            <view class="section-title">Account Name:</view>
+            <input name="acctName" class="section-input" placeholder="a name for account"></input>
+          </view>
+          <block wx:if="{{importType == 0}}">
+            <view class="section">
+              <view class="section-title">password:</view>
+              <input class="section-input" type='password' name="pwd" placeholder="password for keystore"></input>
+            </view>
+            <view class="section">
+              <view class="section-title">Paste your private key string here:</view>
+              <input class="section-input" name="privateKey" placeholder="private key"></input>
+            </view>
+          </block>
+          <block wx:if="{{importType == 1}}">
+            <view class="section">
+              <view class="section-title">password:</view>
+              <input class="section-input" type='password' name="pwd" placeholder="password for keystore"></input>
+            </view>
+            <view class="section">
+              <view class="section-title">Paste your mnemonic words here:<image style="width:32rpx;height:32rpx;padding:6rpx 12rpx;" src="/assets/random.svg" catchtap='generateEvt'></image></view>
+              <textarea class="section-input" name="mnemonic" value="{{randomWords}}" placeholder='word1 word2 word3 ...'></textarea>
+            </view>
+          </block>
+          <block wx:if="{{importType == 2}}">
+            <view class="section">
+              <view class="section-title">JSON String:</view>
+              <textarea class="section-input" name="keystore"></textarea>
+            </view>
+          </block>
+          <view class="btn-area">
+            <button catchtap="cancelEvt">CANCEL</button>
+            <button type="primary" form-type="submit">IMPORT</button>
+          </view>
+        </form>
+      </tab-item>
+    </tab>
+  </view>
+</view>

@@ -1,0 +1,15 @@
+<!--components/header/header.wxml-->
+<view class="top-bar">
+  <image src="/assets/wallet_logo.svg" class="logo" mode="cover"></image>
+  <picker bindchange="bindEnvPickerChange" value="{{index}}" disabled="{{!envEnable}}" range-key="label" range="{{ethEnvs}}">
+    <view class="picker {{envEnable? '':'picker-gray'}}">{{selEnv.label}}</view>
+  </picker>
+  <view wx:if="{{!hasUserInfo && canIUse}}">
+    <button class="btn-login" open-type="getUserInfo" bindgetuserinfo="getUserInfo">
+      <image src="/assets/login.svg" class="btn-img"></image>
+    </button>
+  </view>
+  <block wx:else>
+    <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+  </block>
+</view>

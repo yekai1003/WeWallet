@@ -1,0 +1,63 @@
+/**index.wxss**/
+.acct-list{
+  padding: 30rpx 10rpx;
+}
+.acct-list .acct-list-item {
+  margin: 20rpx 0;
+  background-color: #FFFFFF;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+.acct-list .acct-list-item:first-child {
+  margin-top:0;
+}
+.acct-list .acct-list-item .acct-list-item-hd{
+  padding: 20rpx;
+  display: flex;
+  justify-content:space-between;
+  align-items: center;
+  transition: opacity .3s;
+}
+.acct-list .acct-list-item .acct-list-item-hd-show{
+  opacity: 0.6;
+}
+.acct-list .acct-list-item .acct-list-item-bd{
+  height: 0;
+  overflow: hidden;
+}
+.acct-list .acct-list-item .acct-list-item-bd-show{
+  height:auto;
+}
+.acct-list .acct-list-item .acct-list-item-bd .acct-item-box{
+  opacity: 0;
+  position: relative;
+  background-color: #FFFFFF;
+  line-height: 1.41176471;
+  font-size: 34rpx;
+
+  transform: translateY(-50%);
+  transition: .3s;
+}
+.acct-list .acct-list-item .acct-list-item-bd .acct-item-box .acct-item-box-item{
+  padding: 20rpx;
+  display:flex;
+  justify-content:space-between;
+}
+.acct-list .acct-list-item .acct-list-item-bd .acct-item-box-button {
+  padding: 20rpx;
+  display:flex;
+  justify-content: center;
+  font-size: 28rpx;
+}
+.acct-list .acct-list-item .acct-list-item-bd .acct-item-box-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.acct-list .new-acct-box {
+  margin: 20rpx 0;
+  background-color: #FFFFFF;
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

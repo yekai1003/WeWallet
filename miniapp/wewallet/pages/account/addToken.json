@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "header": "../../components/header/header",
+    "tab": "../../components/tab/tab",
+    "tab-item": "../../components/tab/tab-item"
+  }
+}

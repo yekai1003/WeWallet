@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "EthWallet",
+  "usingComponents": {
+    "header": "../../components/header/header"
+  },
+  "enablePullDownRefresh": true
+}

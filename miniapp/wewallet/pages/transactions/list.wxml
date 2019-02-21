@@ -1,0 +1,38 @@
+<!--pages/transactions/list.wxml-->
+<wxs module="strutil" src="../../utils/stringutil.wxs"></wxs>
+<wxs module="etherutil" src="../../utils/etherutil.wxs"></wxs>
+<view class="container">
+  <header bindchanged="envChanged"></header>
+  <view class="trans-list">
+      <block wx:for="{{transactions}}" wx:for-item="tran" wx:key="tran.id">
+        <view class="trans-list-item">
+          <view id="{{tran.id}}" class="trans-list-item-hd {{tran.open? 'trans-list-item-hd-show':''}}" bindtap="itemToggle">
+            <view>
+              <view>TxHash</view>
+              <view>{{strutil.formatShort(tran.txHash,6,4)}}</view>
+            </view>
+            <view>
+              <view>Value</view>
+              <view wx:if="{{tran.contractAddr}}">{{tran.value}}</view>
+              <view wx:else>{{etherutil.formatValue(tran.value)}}</view>
+            </view>
+            <view><image class="status-icon" data-id='{{tran.id}}' catchtap="refreshEvt" src="/assets/refresh.svg"></image></view>
+            <view><image class="status-icon" src="/assets/status{{tran.status}}.svg"></image></view>
+          </view>
+          <view class="trans-list-item-bd {{tran.open? 'trans-list-item-bd-show':''}}">
+            <view class="trans-detail-box {{tran.open? 'trans-detail-box-show':''}}">
+              <view>created:{{tran.created}}</view>
+              <view>from: 0x{{strutil.formatShort(tran.fromAddr,6,6)}}</view>
+              <view>to: 0x{{strutil.formatShort(tran.toAddr,6,6)}}</view>
+              <view>gas price: {{tran.gasPrice}}</view>
+              <view>gas limit: {{tran.gasLimit}}</view>
+              <view>gas used: {{tran.gasUsed}}</view>
+            </view>
+          </view>
+        </view>
+      </block>
+      <block wx:if="{{transactions.length === 0}}">
+        <view style="width:50%;margin:0 auto;"><image style="width:100%;" src="/assets/nothing.svg"></image></view>
+      </block>
+  </view>
+</view>

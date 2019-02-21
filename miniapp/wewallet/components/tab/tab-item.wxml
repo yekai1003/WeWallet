@@ -1,0 +1,4 @@
+<!--components/tabItem.wxml-->
+<view class="container" hidden='{{isHidden}}'>
+  <slot></slot>
+</view>

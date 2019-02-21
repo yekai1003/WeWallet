@@ -1,0 +1,8 @@
+/* pages/account/new.wxss */
+@import '/css/common.wxss';
+
+.picker{
+  border: 1rpx solid #ccc;
+  border-radius: 8rpx;
+  padding:18rpx;
+}

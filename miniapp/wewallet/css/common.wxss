@@ -1,0 +1,51 @@
+/** form */
+.form-box{
+  margin:18rpx 2rpx;
+}
+.section{
+  padding:8rpx 18rpx;
+}
+.section-h{
+  display: flex;
+  flex-direction: row;
+}
+.section .section-title {
+  display: flex;
+  flex-direction: row;
+  padding:8rpx 18rpx;
+}
+.section-h .section-title{
+  width: 25%;
+}
+.section .section-input{
+  padding:8rpx 18rpx;
+  border: 1rpx solid #ccc;
+  border-radius: 8rpx;
+  width: auto;
+}
+.section-h .section-input{
+  width: 70%;
+}
+.btn-area{
+  border-top: 1rpx solid #ccc;
+  display: flex;
+  flex-direction: row;
+  align-content: space-between;
+}
+.btn-area button{
+  margin:18rpx auto;
+}
+.btn-area .btn{
+  height:84rpx;
+  background-color: #f8f8f8;
+  border-radius: 15rpx;
+  border: 1rpx solid #ccc;
+}
+.btn-area .btn::after{
+  border:none;
+}
+.btn-area .btn .btn-img{
+  padding:18rpx;
+  width:48rpx;
+  height:48rpx;
+}

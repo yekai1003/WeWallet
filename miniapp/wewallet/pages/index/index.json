@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "tab": "../../components/tab/tab",
+    "tab-item": "../../components/tab/tab-item"
+    },
+  "enablePullDownRefresh": true
+}

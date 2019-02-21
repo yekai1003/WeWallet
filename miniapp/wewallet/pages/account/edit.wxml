@@ -1,0 +1,19 @@
+<view class="container">
+  <view style="font-size:48rpx;">Edit Account</view>
+  <view class="ctrl-box">
+    <tab>
+      <tab-item header="Edit">
+        <form class="form-box" bindsubmit="editSubmit">
+          <view class="section">
+            <view class="section-title">Account Name :</view>
+            <input name="acctName" class="section-input" value="{{account.mark}}" placeholder='a name for account'></input>
+          </view>
+          <view class="btn-area">
+            <button catchtap="cancelEvt">CANCEL</button>
+            <button type="primary" form-type="submit">EDIT</button>
+          </view>
+        </form>
+      </tab-item>
+    </tab>
+  </view>
+</view>

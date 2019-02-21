@@ -1,0 +1,67 @@
+/**
+ * 把 传入 的wei 值转换成 eth，或者其他可以看到的单位
+ */
+var units = ['wei', 'Kwei', 'Mwei', 'Gwei', 'microether', 'milliether', 'ether']
+
+var formatValue = function(val){
+  console.log('val->'+val)
+  if(0 == parseInt(val))
+    return 0 +' ether'
+  // 分解成数组并反转序列
+  var valArr = val.split("").reverse()
+  var valStrRev = valArr.join("")
+  // 去零，求非零
+  var pos // 用于保存 3的倍数 的索引
+  var i  // 用于记录 非 0 位置的索引
+  var unitIndex // 用于记录 当前第几段
+  for (i = 0; i < valArr.length; i++) {
+    if (valArr[i] != '0') {
+      if (i >= 18)
+        i = 17
+      if ((i + 1) % 3 != 0) {
+        pos = (parseInt((i + 1) / 3) + 1) * 3 - 1
+        unitIndex = parseInt((i + 1) / 3) + 1
+      } else {
+        pos = i
+        unitIndex = parseInt((i + 1) / 3)
+      }
+      // 跳出循环
+      break
+    }
+  }
+  // 计算 两段字符串
+  var pVal = valStrRev.substring(i, pos + 1)
+  if (pVal != '0') pVal += '.'
+  else pVal = ''
+  var aVal = '0'
+  if ((pos + 1) < valStrRev.length) // 条件成立 才可以计算，否则没意义
+    aVal = valStrRev.substring(pos + 1, valStrRev.length)
+  var retVal = (pVal + aVal).split("").reverse().join("")
+  //console.log('unitIndex:'+unitIndex)
+  return retVal + " " + units[unitIndex]
+}
+/**
+ * 此逻辑应该是以 ether单位为主，看下有没有显示的内容，如果没有向前移动一格单位，知道有数值位置，小数后只显示3位数字
+ */
+var formatValue2 = function (val) {
+  // 分解成数组并反转序列
+  var valArr = val.split("").reverse()
+  var valStrRev = valArr.join("")
+  // 保存字段内容 数组
+  var fieldArr = []
+  for(var i=0;i<valStrRev.length;i+=3){
+    var endIndex = ((i + 3) > valStrRev.length) ? valStrRev.length:i+3
+    fieldArr.push(valStrRev.substring(i, endIndex).split("").reverse().join(""))
+  }
+  fieldArr = fieldArr.reverse()
+  // 做个特殊处理，如果 长度是 5,6 直接显示成ether
+  if (fieldArr.length == 5)
+    return "0.000" + fieldArr[0] + " ether"
+  else if (fieldArr.length == 6)
+    return "0." + fieldArr[0] + ((fieldArr[1] === '000') ? "" : fieldArr[1]) +" ether"
+  return fieldArr[0] + (fieldArr[1] ? ("." + fieldArr[1]):'') + " " + units[fieldArr.length-1]
+}
+
+module.exports = {
+  formatValue: formatValue2
+}

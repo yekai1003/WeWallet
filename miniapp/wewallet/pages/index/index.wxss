@@ -1,0 +1,114 @@
+/* pages/test/index.wxss */
+@import '/components/header/header.wxss';
+@import '/css/common.wxss';
+
+.record-box{
+  border-bottom: 1rpx solid #ccc;
+  border-radius: 18rpx;
+  background-color: #FFFFFF;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: .6s;
+}
+.record-box-show{
+  height:auto;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.info-box{
+  margin-top:20rpx;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1rpx solid #ccc;
+  border-radius: 18rpx;
+  background-color: #FFFFFF;
+}
+.info-box .top{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.info-box .bottom{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.info-box .m-box{
+  padding:18rpx 68rpx;
+}
+.info-box .m-box .m{
+  font-size: 36rpx;
+  font-weight: bold;
+}
+.today-info {
+  margin-top:20rpx;
+  border-radius: 18rpx;
+  border: 1rpx solid #ccc;
+  background-color: #FFFFFF;
+}
+.m-list{
+  border-radius: 18rpx;
+}
+.m-list .m-list-item{
+  margin: 20rpx 0;
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+.m-list .m-list-item:first-child{
+  margin-top: 0;
+}
+
+.m-list .m-list-item .m-list-item-hd{
+  margin: 30rpx 18rpx 0 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  transition: opacity .6s;
+}
+.m-list .m-list-item .m-list-item-hd-show{
+  opacity: .6;
+}
+.m-list .m-list-item .m-list-item-bd{
+  height: 0;
+  overflow: hidden;
+}
+.m-list .m-list-item .m-list-item-bd-show{
+  height: auto;
+  border-top: 1rpx solid #ccc;
+}
+.m-list .m-list-item .r-list-item{
+  padding:8rpx 30rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: .6s;
+}
+.m-list .m-list-item .r-list-item-show{
+  opacity: 1;
+  transform: translateY(0);
+}
+.switch-bar{
+  margin-top:18rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #FFFFFF;
+  border-radius: 18rpx;
+  border-bottom: 1rpx solid #ccc;
+}
+.switch-bar image{
+  padding:18rpx;
+  width:38rpx;
+  height:38rpx;
+}
+.switch-bar .bar-title{
+  padding:18rpx;
+  font-weight: bold;
+}

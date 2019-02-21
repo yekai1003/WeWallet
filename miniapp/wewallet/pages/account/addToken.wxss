@@ -1,0 +1,6 @@
+/* pages/account/addToken.wxss */
+@import '/css/common.wxss';
+
+.add-box{
+  margin: 0 30rpx 0 0;
+}

@@ -1,0 +1,56 @@
+<!--index.wxml-->
+<wxs module="strutil" src="../../utils/stringutil.wxs"></wxs>
+<wxs module="etherutil" src="../../utils/etherutil.wxs"></wxs>
+<view class="container">
+  <header bindchanged="envChanged"></header>
+  <view class="acct-list">
+    <block wx:for="{{accounts}}" wx:key="item.id">
+      <view class="acct-list-item">
+        <view id="{{item.id}}" class="acct-list-item-hd {{item.open ? 'acct-list-item-hd-show':''}}" bindtap="itemToggle">
+          <view>{{item.mark}}</view>
+          <view style="display:flex;">
+            <view>0x{{strutil.formatShort(item.addr,4,4)}}</view>
+            <image src="/assets/copy.svg" style="width:36rpx;height:36rpx;padding:2rpx" data-id="{{item.id}}" catchtap="copyAddrEvt"></image>
+          </view>
+          <image src="/assets/edit-2.svg" style="width:36rpx;height:36rpx;padding:2rpx" data-id="{{item.id}}" catchtap="editAcctEvt"></image>
+        </view>
+        <view class="acct-list-item-bd {{item.open ? 'acct-list-item-bd-show':''}}">
+          <view class="acct-item-box {{item.open ? 'acct-item-box-show':''}}">
+            <!-- ether -->
+            <view class="acct-item-box-item" style="border-bottom:2rpx solid #ccc">
+              <view style="display:flex" data-id='{{item.id}}' catchtap='showTransactionsEvt'>
+                <image src="/assets/ethereum.svg" style="width:68rpx;height:68rpx;padding:2rpx"></image>
+                <view style="height:68rpx;line-height:68rpx;padding:2rpx;margin-left:15rpx;">{{etherutil.formatValue(item.balances[selEnv.val].val)}}</view>
+                <image src="/assets/refresh.svg" data-acctid="{{item.id}}" catchtap='refreshAcctEvt' style="width:40rpx;height:40rpx;padding:16rpx 16rpx;"></image>
+              </view>
+              <view style="display:flex;justify-content:space-between;width:25%">
+                <image src="/assets/deposit.svg" style="width:48rpx;height:48rpx;padding:12rpx 2rpx;" data-id="{{item.id}}" data-type="account" catchtap="depositEvt"></image>
+                <image src="/assets/send.svg" style="width:48rpx;height:48rpx;padding:12rpx 2rpx;" data-id="{{item.id}}" data-type="account" catchtap="sendEvt"></image>
+              </view>
+            </view>
+            <!-- token -->
+            <view wx:if="{{item.tokens}}" wx:for="{{item.tokens}}" wx:for-item="token" wx:key="token.id" class="acct-item-box-item">
+              <view style="display:flex">
+                <image src="{{token.icon ? token.icon:'/assets/token.svg'}}" style="width:68rpx;height:68rpx;padding:2rpx"></image>
+                <view style="height:68rpx;line-height:68rpx;padding:2rpx;margin-left:15rpx;">{{token.balance}} {{token.symbol? token.symbol:""}}</view>
+                <image src="/assets/refresh.svg" data-acctid="{{item.id}}" data-tokenid="{{token.id}}" catchtap='refreshTokenEvt' style="width:40rpx;height:40rpx;padding:16rpx 16rpx;"></image>
+              </view>
+              <view style="display:flex;justify-content:flex-end;width:25%;">
+                <image src="/assets/send.svg" style="width:48rpx;height:48rpx;padding:12rpx 2rpx;" data-id="{{token.id}}" data-type="token" catchtap="sendEvt"></image>
+              </view>
+            </view>
+            <!-- add token button -->
+            <view class='acct-item-box-button' data-acctid="{{item.id}}" catchtap='addTokenEvt'>
+              <image src="/assets/tokens.svg" style='width:38rpx;height:38rpx;padding:4rpx;'></image>
+              <view style="height:38rpx;line-height:38rpx;padding:4rpx;">add token</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+    <!-- 新建账户 -->
+    <view class="new-acct-box">
+      <image src="/assets/new_icon.svg" style="width:48rpx;height:48rpx;padding:18rpx;" bindtap="newAcctEvt"></image>
+    </view>
+  </view>
+</view>

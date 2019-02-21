@@ -1,0 +1,4 @@
+/* components/tabItem.wxss */
+.container{
+  width:100%;
+}
